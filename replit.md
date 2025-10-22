@@ -34,6 +34,16 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
+### October 22, 2025 - Google Gemini Integration
+- **Switched to Google Gemini** for AI image generation
+  - Updated ImageGenerator to use gemini-2.0-flash-preview-image-generation
+  - Gemini is now the primary image generator
+  - OpenAI DALL-E 3 retained as fallback
+  - Placeholder generation as final fallback
+- Installed google-genai Python package
+- Successfully tested Gemini image generation
+- Updated documentation to reflect new GenAI provider
+
 ### October 22, 2025 - Web Interface Implementation
 - **Added Flask web application** (`app.py`)
   - RESTful API endpoints for campaign generation
@@ -84,10 +94,11 @@ creative-automation-pipeline/
 
 ### Key Technologies
 - **Language**: Python 3.11
+- **Web Framework**: Flask
 - **Image Processing**: Pillow (PIL)
-- **GenAI**: OpenAI DALL-E 3 API
+- **GenAI**: Google Gemini (primary), OpenAI DALL-E 3 (fallback)
 - **Data Formats**: JSON, YAML
-- **Dependencies**: pillow, pyyaml, requests, openai, python-dotenv
+- **Dependencies**: flask, pillow, pyyaml, requests, google-genai, openai, python-dotenv, werkzeug
 
 ### Design Decisions
 1. **Modular Architecture**: Clear separation of concerns for maintainability
@@ -112,7 +123,9 @@ python main.py examples/campaign_brief.yaml --assets-dir ./my_assets --outputs-d
 ## Configuration
 
 ### Environment Variables
-- `OPENAI_API_KEY`: Optional - for GenAI image generation. If not provided, system generates placeholder images.
+- `GEMINI_API_KEY`: Primary - for Google Gemini image generation (recommended)
+- `OPENAI_API_KEY`: Fallback - for OpenAI DALL-E image generation
+- If neither is provided, system generates placeholder images
 
 ### Campaign Brief Format
 Required fields:
