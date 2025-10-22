@@ -1,0 +1,15 @@
+region: "North America"
+audience: "Health-conscious millennials aged 25-40"
+message: "Transform Your Morning Routine"
+
+products:
+  - name: "Premium Green Tea"
+    description: "Organic premium green tea in elegant packaging"
+    
+  - name: "Protein Energy Bar"
+    description: "High-protein energy bar with natural ingredients"
+
+localized_messages:
+  en: "Transform Your Morning Routine"
+  es: "Transforma Tu Rutina Matutina"
+  fr: "Transformez Votre Routine Matinale"

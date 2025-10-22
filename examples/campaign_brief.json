@@ -1,0 +1,20 @@
+{
+  "region": "Europe",
+  "audience": "Tech-savvy professionals aged 30-50",
+  "message": "Elevate Your Workspace Experience",
+  "products": [
+    {
+      "name": "Wireless Ergonomic Mouse",
+      "description": "Premium wireless ergonomic mouse with precision tracking"
+    },
+    {
+      "name": "Mechanical Keyboard",
+      "description": "Professional mechanical keyboard with RGB lighting"
+    }
+  ],
+  "localized_messages": {
+    "en": "Elevate Your Workspace Experience",
+    "de": "Verbessern Sie Ihr Arbeitsplatzerlebnis",
+    "fr": "Améliorez Votre Expérience de Travail"
+  }
+}
