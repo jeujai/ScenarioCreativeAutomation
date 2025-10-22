@@ -1,4 +1,5 @@
 import logging
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 from PIL import Image
@@ -18,9 +19,30 @@ class CreativeAutomationPipeline:
         self.image_generator = ImageGenerator()
         self.image_processor = ImageProcessor()
         self.outputs_dir = Path(outputs_dir)
+        self.assets_dir = Path(assets_dir)
         self.outputs_dir.mkdir(parents=True, exist_ok=True)
     
+    def _purge_all_assets(self):
+        """Clear all existing outputs and generated assets before each run"""
+        logger.info("Purging all existing assets and outputs...")
+        
+        if self.outputs_dir.exists():
+            for item in self.outputs_dir.iterdir():
+                if item.is_dir():
+                    shutil.rmtree(item)
+                elif item.is_file():
+                    item.unlink()
+        
+        if self.assets_dir.exists():
+            for item in self.assets_dir.iterdir():
+                if item.is_file() and item.suffix == '.png':
+                    item.unlink()
+        
+        logger.info("All assets purged. Starting fresh generation...")
+    
     def run(self, campaign_brief: CampaignBrief) -> Dict[str, List[Path]]:
+        self._purge_all_assets()
+        
         logger.info(f"Starting campaign pipeline for {len(campaign_brief.products)} products")
         logger.info(f"Region: {campaign_brief.region}, Audience: {campaign_brief.audience}")
         

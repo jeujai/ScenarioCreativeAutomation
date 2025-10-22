@@ -102,8 +102,8 @@ creative-automation-pipeline/
 
 ### Design Decisions
 1. **Modular Architecture**: Clear separation of concerns for maintainability
-2. **Asset Reusability**: Check existing assets before generating to optimize costs
-3. **Fallback Mechanism**: Placeholder images when GenAI unavailable
+2. **Auto-Purge Assets**: Automatically clears all previous assets and outputs before each generation to ensure fresh AI-generated images every time
+3. **Fallback Mechanism**: Gemini → OpenAI DALL-E → Placeholder images
 4. **Extensible Format**: Support both JSON and YAML for campaign briefs
 5. **Smart Text Overlay**: Dynamic sizing and wrapping based on image dimensions
 
