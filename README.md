@@ -2,8 +2,12 @@
 
 A proof-of-concept creative automation pipeline that generates social ad campaign assets using GenAI. This system automates the creation of localized campaign creatives for multiple products, aspect ratios, and markets.
 
+**Available as both a Web Application and Command-Line Tool!**
+
 ## Features
 
+- **🌐 Web Interface**: Modern, intuitive web UI for easy campaign creation and asset preview
+- **💻 CLI Tool**: Command-line interface for automation and batch processing
 - **Campaign Brief Management**: Accept campaign briefs in JSON or YAML format
 - **Multi-Product Support**: Generate creatives for multiple products in a single campaign
 - **Intelligent Asset Management**: Reuse existing assets when available, generate new ones when needed
@@ -17,7 +21,8 @@ A proof-of-concept creative automation pipeline that generates social ad campaig
 
 ```
 creative-automation-pipeline/
-├── main.py                     # Main CLI entry point
+├── app.py                      # Flask web application
+├── main.py                     # CLI entry point
 ├── src/
 │   ├── __init__.py
 │   ├── config.py               # Configuration and constants
@@ -26,6 +31,11 @@ creative-automation-pipeline/
 │   ├── image_generator.py      # GenAI image generation (OpenAI DALL-E)
 │   ├── image_processor.py      # Image resizing and text overlay
 │   └── pipeline.py             # Main pipeline orchestrator
+├── templates/
+│   └── index.html              # Web interface template
+├── static/
+│   └── css/
+│       └── style.css           # Web interface styling
 ├── examples/
 │   ├── campaign_brief.yaml     # Example YAML campaign brief
 │   ├── campaign_brief.json     # Example JSON campaign brief
@@ -40,6 +50,7 @@ creative-automation-pipeline/
 
 - Python 3.11+
 - Dependencies (see pyproject.toml):
+  - Flask (web framework)
   - Pillow (image processing)
   - PyYAML (YAML parsing)
   - requests (HTTP requests)
@@ -52,12 +63,12 @@ creative-automation-pipeline/
 
 2. **Install dependencies**:
    ```bash
-   pip install pillow pyyaml requests openai python-dotenv
+   pip install flask pillow pyyaml requests openai python-dotenv
    ```
    
    Or if using uv (Replit environment):
    ```bash
-   uv pip install pillow pyyaml requests openai python-dotenv
+   uv pip install flask pillow pyyaml requests openai python-dotenv
    ```
 
 3. **Configure OpenAI API Key** (optional, for GenAI image generation):
@@ -70,7 +81,30 @@ creative-automation-pipeline/
 
 ## Usage
 
-### Basic Usage
+### Option 1: Web Interface (Recommended)
+
+The easiest way to use the Creative Automation Pipeline is through the web interface.
+
+1. **Start the web server**:
+   ```bash
+   python app.py
+   ```
+
+2. **Open your browser** and navigate to `http://localhost:5000`
+
+3. **Create your campaign**:
+   - Fill in the campaign details (region, audience, message)
+   - Add at least 2 products with descriptions
+   - Click "Generate Campaign Assets"
+   - View and download your generated creatives!
+
+4. **Load Examples**: Use the "Load Example" buttons to see pre-configured campaigns
+
+### Option 2: Command-Line Interface
+
+For automation and batch processing, use the CLI tool.
+
+**Basic Usage**
 
 Run the pipeline with a campaign brief:
 
