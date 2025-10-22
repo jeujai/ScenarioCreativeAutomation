@@ -58,7 +58,7 @@ class ImageGenerator:
                 model="gemini-2.0-flash-preview-image-generation",
                 contents=prompt,
                 config=self.genai_types.GenerateContentConfig(
-                    response_modalities=['IMAGE']
+                    response_modalities=['TEXT', 'IMAGE']
                 )
             )
             
