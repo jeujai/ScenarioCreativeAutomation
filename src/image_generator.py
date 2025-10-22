@@ -11,23 +11,79 @@ logger = logging.getLogger(__name__)
 
 class ImageGenerator:
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
-        self.use_openai = bool(self.api_key)
+        self.gemini_key = os.getenv("GEMINI_API_KEY")
+        self.openai_key = api_key or os.getenv("OPENAI_API_KEY")
         
-        if self.use_openai:
+        self.use_gemini = False
+        self.use_openai = False
+        self.gemini_client = None
+        self.openai_client = None
+        
+        if self.gemini_key:
+            try:
+                from google import genai
+                from google.genai import types
+                self.genai = genai
+                self.genai_types = types
+                self.gemini_client = genai.Client(api_key=self.gemini_key)
+                self.use_gemini = True
+                logger.info("Gemini client initialized for image generation")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Gemini client: {e}")
+                self.use_gemini = False
+        
+        if not self.use_gemini and self.openai_key:
             try:
                 from openai import OpenAI
-                self.client = OpenAI(api_key=self.api_key)
+                self.openai_client = OpenAI(api_key=self.openai_key)
+                self.use_openai = True
                 logger.info("OpenAI client initialized for image generation")
             except Exception as e:
                 logger.warning(f"Failed to initialize OpenAI client: {e}")
                 self.use_openai = False
     
     def generate_image(self, prompt: str, size: str = "1024x1024") -> Optional[Image.Image]:
-        if self.use_openai:
+        if self.use_gemini:
+            return self._generate_with_gemini(prompt, size)
+        elif self.use_openai:
             return self._generate_with_openai(prompt, size)
         else:
             return self._generate_placeholder(prompt)
+    
+    def _generate_with_gemini(self, prompt: str, size: str = "1024x1024") -> Optional[Image.Image]:
+        try:
+            logger.info(f"Generating image with Google Gemini: {prompt[:50]}...")
+            
+            response = self.gemini_client.models.generate_content(
+                model="gemini-2.0-flash-preview-image-generation",
+                contents=prompt,
+                config=self.genai_types.GenerateContentConfig(
+                    response_modalities=['IMAGE']
+                )
+            )
+            
+            if not response.candidates:
+                raise ValueError("No image generated from Gemini")
+            
+            content = response.candidates[0].content
+            if not content or not content.parts:
+                raise ValueError("No content parts in Gemini response")
+            
+            for part in content.parts:
+                if part.inline_data and part.inline_data.data:
+                    image = Image.open(BytesIO(part.inline_data.data))
+                    logger.info("Successfully generated image with Gemini")
+                    return image
+            
+            raise ValueError("No image data found in Gemini response")
+            
+        except Exception as e:
+            logger.error(f"Error generating image with Gemini: {e}")
+            if self.use_openai:
+                logger.info("Falling back to OpenAI DALL-E")
+                return self._generate_with_openai(prompt, size)
+            else:
+                return self._generate_placeholder(prompt)
     
     def _generate_with_openai(self, prompt: str, size: str = "1024x1024") -> Optional[Image.Image]:
         try:
