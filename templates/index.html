@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Automation Pipeline</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Creative Automation Pipeline</h1>
+            <p class="subtitle">Generate social ad campaign assets with GenAI</p>
+        </header>
+
+        <div class="main-content">
+            <section class="form-section">
+                <h2>Create Campaign</h2>
+                
+                <div class="example-buttons">
+                    <button onclick="loadExample('campaign_brief')" class="btn btn-secondary">Load Example 1</button>
+                    <button onclick="loadExample('multi_product_campaign')" class="btn btn-secondary">Load Example 2</button>
+                    <button onclick="clearForm()" class="btn btn-secondary">Clear Form</button>
+                </div>
+
+                <form id="campaignForm">
+                    <div class="form-group">
+                        <label for="region">Region/Market</label>
+                        <input type="text" id="region" name="region" placeholder="e.g., North America, Europe, Asia-Pacific">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="audience">Target Audience</label>
+                        <input type="text" id="audience" name="audience" placeholder="e.g., Tech-savvy professionals aged 30-50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Campaign Message <span class="required">*</span></label>
+                        <input type="text" id="message" name="message" required placeholder="e.g., Transform Your Morning Routine">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Products <span class="required">*</span> <small>(minimum 2)</small></label>
+                        <div id="productsContainer">
+                            <div class="product-item">
+                                <input type="text" placeholder="Product Name" class="product-name" required>
+                                <input type="text" placeholder="Description (optional)" class="product-description">
+                                <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+                            </div>
+                            <div class="product-item">
+                                <input type="text" placeholder="Product Name" class="product-name" required>
+                                <input type="text" placeholder="Description (optional)" class="product-description">
+                                <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addProduct()" class="btn btn-secondary">+ Add Product</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="generateBtn">
+                            Generate Campaign Assets
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2>Generated Assets</h2>
+                <div id="loadingIndicator" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Generating campaign assets...</p>
+                </div>
+                <div id="resultsGrid" class="results-grid"></div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        let productCount = 2;
+
+        function addProduct() {
+            productCount++;
+            const container = document.getElementById('productsContainer');
+            const productItem = document.createElement('div');
+            productItem.className = 'product-item';
+            productItem.innerHTML = `
+                <input type="text" placeholder="Product Name" class="product-name" required>
+                <input type="text" placeholder="Description (optional)" class="product-description">
+                <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+            `;
+            container.appendChild(productItem);
+        }
+
+        function removeProduct(button) {
+            const container = document.getElementById('productsContainer');
+            if (container.children.length > 2) {
+                button.parentElement.remove();
+                productCount--;
+            } else {
+                alert('Minimum 2 products required');
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('campaignForm').reset();
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = `
+                <div class="product-item">
+                    <input type="text" placeholder="Product Name" class="product-name" required>
+                    <input type="text" placeholder="Description (optional)" class="product-description">
+                    <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+                </div>
+                <div class="product-item">
+                    <input type="text" placeholder="Product Name" class="product-name" required>
+                    <input type="text" placeholder="Description (optional)" class="product-description">
+                    <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+                </div>
+            `;
+            productCount = 2;
+            document.getElementById('resultsSection').style.display = 'none';
+        }
+
+        async function loadExample(exampleName) {
+            try {
+                const response = await fetch('/examples');
+                const examples = await response.json();
+                const example = examples[exampleName];
+                
+                if (!example) {
+                    alert('Example not found');
+                    return;
+                }
+
+                document.getElementById('region').value = example.region || '';
+                document.getElementById('audience').value = example.audience || '';
+                document.getElementById('message').value = example.message || '';
+
+                const container = document.getElementById('productsContainer');
+                container.innerHTML = '';
+                productCount = 0;
+
+                example.products.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.className = 'product-item';
+                    productItem.innerHTML = `
+                        <input type="text" placeholder="Product Name" class="product-name" value="${product.name || ''}" required>
+                        <input type="text" placeholder="Description (optional)" class="product-description" value="${product.description || ''}">
+                        <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+                    `;
+                    container.appendChild(productItem);
+                    productCount++;
+                });
+            } catch (error) {
+                console.error('Error loading example:', error);
+                alert('Error loading example');
+            }
+        }
+
+        document.getElementById('campaignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const products = [];
+            const productItems = document.querySelectorAll('.product-item');
+            
+            productItems.forEach(item => {
+                const name = item.querySelector('.product-name').value.trim();
+                const description = item.querySelector('.product-description').value.trim();
+                
+                if (name) {
+                    products.push({
+                        name: name,
+                        description: description || ''
+                    });
+                }
+            });
+
+            if (products.length < 2) {
+                alert('Please add at least 2 products');
+                return;
+            }
+
+            const campaignData = {
+                region: document.getElementById('region').value.trim() || 'Global',
+                audience: document.getElementById('audience').value.trim() || 'General',
+                message: document.getElementById('message').value.trim(),
+                products: products
+            };
+
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsGrid = document.getElementById('resultsGrid');
+            const generateBtn = document.getElementById('generateBtn');
+
+            resultsSection.style.display = 'block';
+            loadingIndicator.style.display = 'block';
+            resultsGrid.innerHTML = '';
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(campaignData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Generation failed');
+                }
+
+                loadingIndicator.style.display = 'none';
+
+                const groupedFiles = {};
+                result.files.forEach(file => {
+                    if (!groupedFiles[file.product]) {
+                        groupedFiles[file.product] = [];
+                    }
+                    groupedFiles[file.product].push(file);
+                });
+
+                let html = '';
+                for (const [product, files] of Object.entries(groupedFiles)) {
+                    html += `
+                        <div class="product-group">
+                            <h3>${product}</h3>
+                            <div class="image-grid">
+                    `;
+                    
+                    files.forEach(file => {
+                        html += `
+                            <div class="image-card">
+                                <img src="${file.url}" alt="${file.product} - ${file.filename}">
+                                <div class="image-info">
+                                    <p>${file.filename}</p>
+                                    <a href="${file.url}" download="${file.filename}" class="btn btn-small">Download</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+
+                resultsGrid.innerHTML = html;
+
+            } catch (error) {
+                loadingIndicator.style.display = 'none';
+                resultsGrid.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Campaign Assets';
+            }
+        });
+    </script>
+</body>
+</html>
