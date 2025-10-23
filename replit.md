@@ -34,15 +34,14 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
-### October 22, 2025 - Google Gemini Integration
-- **Switched to Google Gemini** for AI image generation
-  - Updated ImageGenerator to use gemini-2.0-flash-preview-image-generation
-  - Gemini is now the primary image generator
-  - OpenAI DALL-E 3 retained as fallback
+### October 23, 2025 - Switched to OpenAI DALL-E Primary
+- **Switched to OpenAI DALL-E 3** as primary AI image generator
+  - OpenAI DALL-E 3 is now the primary image generator
+  - Google Gemini retained as fallback
   - Placeholder generation as final fallback
-- Installed google-genai Python package
-- Successfully tested Gemini image generation
-- Updated documentation to reflect new GenAI provider
+- Updated ImageGenerator to prioritize OpenAI over Gemini
+- Successfully tested with OpenAI API key
+- Updated documentation to reflect new GenAI priority
 
 ### October 22, 2025 - Web Interface Implementation
 - **Added Flask web application** (`app.py`)
@@ -96,14 +95,14 @@ creative-automation-pipeline/
 - **Language**: Python 3.11
 - **Web Framework**: Flask
 - **Image Processing**: Pillow (PIL)
-- **GenAI**: Google Gemini (primary), OpenAI DALL-E 3 (fallback)
+- **GenAI**: OpenAI DALL-E 3 (primary), Google Gemini (fallback)
 - **Data Formats**: JSON, YAML
-- **Dependencies**: flask, pillow, pyyaml, requests, google-genai, openai, python-dotenv, werkzeug
+- **Dependencies**: flask, pillow, pyyaml, requests, openai, google-genai, python-dotenv, werkzeug
 
 ### Design Decisions
 1. **Modular Architecture**: Clear separation of concerns for maintainability
 2. **Auto-Purge Assets**: Automatically clears all previous assets and outputs before each generation to ensure fresh AI-generated images every time
-3. **Fallback Mechanism**: Gemini → OpenAI DALL-E → Placeholder images
+3. **Fallback Mechanism**: OpenAI DALL-E 3 → Google Gemini → Placeholder images
 4. **Extensible Format**: Support both JSON and YAML for campaign briefs
 5. **Smart Text Overlay**: Dynamic sizing and wrapping based on image dimensions
 
@@ -123,8 +122,8 @@ python main.py examples/campaign_brief.yaml --assets-dir ./my_assets --outputs-d
 ## Configuration
 
 ### Environment Variables
-- `GEMINI_API_KEY`: Primary - for Google Gemini image generation (recommended)
-- `OPENAI_API_KEY`: Fallback - for OpenAI DALL-E image generation
+- `OPENAI_API_KEY`: Primary - for OpenAI DALL-E 3 image generation (recommended)
+- `GEMINI_API_KEY`: Fallback - for Google Gemini image generation
 - If neither is provided, system generates placeholder images
 
 ### Campaign Brief Format
@@ -144,7 +143,7 @@ Required fields:
 - System fonts (DejaVu, Liberation) available
 
 ### Current Limitations
-- Requires OpenAI API key for actual GenAI (falls back to placeholders)
+- Requires OpenAI API key for best results (falls back to Gemini, then placeholders)
 - No automatic translation (accepts pre-translated messages)
 - Brand compliance not implemented (future enhancement)
 - Legal content checks not implemented (future enhancement)

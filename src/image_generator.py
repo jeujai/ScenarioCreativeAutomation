@@ -11,13 +11,23 @@ logger = logging.getLogger(__name__)
 
 class ImageGenerator:
     def __init__(self, api_key: Optional[str] = None):
-        self.gemini_key = os.getenv("GEMINI_API_KEY")
         self.openai_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.gemini_key = os.getenv("GEMINI_API_KEY")
         
-        self.use_gemini = False
         self.use_openai = False
-        self.gemini_client = None
+        self.use_gemini = False
         self.openai_client = None
+        self.gemini_client = None
+        
+        if self.openai_key:
+            try:
+                from openai import OpenAI
+                self.openai_client = OpenAI(api_key=self.openai_key)
+                self.use_openai = True
+                logger.info("OpenAI DALL-E client initialized for image generation (primary)")
+            except Exception as e:
+                logger.warning(f"Failed to initialize OpenAI client: {e}")
+                self.use_openai = False
         
         if self.gemini_key:
             try:
@@ -27,26 +37,16 @@ class ImageGenerator:
                 self.genai_types = types
                 self.gemini_client = genai.Client(api_key=self.gemini_key)
                 self.use_gemini = True
-                logger.info("Gemini client initialized for image generation")
+                logger.info("Gemini client initialized for image generation (fallback)")
             except Exception as e:
                 logger.warning(f"Failed to initialize Gemini client: {e}")
                 self.use_gemini = False
-        
-        if not self.use_gemini and self.openai_key:
-            try:
-                from openai import OpenAI
-                self.openai_client = OpenAI(api_key=self.openai_key)
-                self.use_openai = True
-                logger.info("OpenAI client initialized for image generation")
-            except Exception as e:
-                logger.warning(f"Failed to initialize OpenAI client: {e}")
-                self.use_openai = False
     
     def generate_image(self, prompt: str, size: str = "1024x1024") -> Optional[Image.Image]:
-        if self.use_gemini:
-            return self._generate_with_gemini(prompt, size)
-        elif self.use_openai:
+        if self.use_openai:
             return self._generate_with_openai(prompt, size)
+        elif self.use_gemini:
+            return self._generate_with_gemini(prompt, size)
         else:
             return self._generate_placeholder(prompt)
     
@@ -108,12 +108,16 @@ class ImageGenerator:
             img_response.raise_for_status()
             
             image = Image.open(BytesIO(img_response.content))
-            logger.info("Successfully generated image with OpenAI")
+            logger.info("Successfully generated image with OpenAI DALL-E")
             return image
             
         except Exception as e:
             logger.error(f"Error generating image with OpenAI: {e}")
-            return self._generate_placeholder(prompt)
+            if self.use_gemini:
+                logger.info("Falling back to Google Gemini")
+                return self._generate_with_gemini(prompt, size)
+            else:
+                return self._generate_placeholder(prompt)
     
     def _generate_placeholder(self, prompt: str) -> Image.Image:
         logger.info(f"Generating placeholder image for: {prompt[:50]}...")
