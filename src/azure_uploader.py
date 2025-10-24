@@ -2,6 +2,7 @@ import os
 import logging
 from pathlib import Path
 from typing import Optional, List
+from urllib.parse import urlparse, parse_qs
 from azure.storage.blob import BlobServiceClient, ContentSettings
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,12 @@ class AzureUploader:
         
         if self.connection_string:
             try:
-                self.blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+                # Check if it's a SAS URL (starts with https://) or a connection string
+                if self.connection_string.startswith("https://"):
+                    self._init_from_sas_url(self.connection_string)
+                else:
+                    self._init_from_connection_string(self.connection_string)
+                
                 self._ensure_container_exists()
                 self.enabled = True
                 logger.info(f"Azure Blob Storage initialized - container: {self.container_name}")
@@ -25,6 +31,34 @@ class AzureUploader:
                 self.enabled = False
         else:
             logger.info("Azure Blob Storage not configured (AZURE_STORAGE_CONNECTION_STRING not set)")
+    
+    def _init_from_connection_string(self, connection_string: str):
+        """Initialize from traditional connection string"""
+        self.blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+    
+    def _init_from_sas_url(self, sas_url: str):
+        """Initialize from SAS URL (more secure, scoped permissions)"""
+        # Parse the SAS URL: https://account.blob.core.windows.net/container?sas_token
+        parsed = urlparse(sas_url)
+        
+        # Extract container name from path (e.g., /campaigncreators -> campaigncreators)
+        container_from_url = parsed.path.lstrip('/')
+        if container_from_url:
+            self.container_name = container_from_url
+        
+        # Build account URL: https://account.blob.core.windows.net
+        account_url = f"{parsed.scheme}://{parsed.netloc}"
+        
+        # SAS token is the query string (e.g., ?sp=racwdli&st=...)
+        sas_token = parsed.query
+        
+        # Create BlobServiceClient with account URL + SAS token
+        self.blob_service_client = BlobServiceClient(
+            account_url=account_url,
+            credential=sas_token
+        )
+        
+        logger.info(f"Initialized with SAS URL - Account: {parsed.netloc}, Container: {self.container_name}")
     
     def _ensure_container_exists(self):
         try:

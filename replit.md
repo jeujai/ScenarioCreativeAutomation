@@ -140,15 +140,24 @@ python main.py examples/campaign_brief.yaml --assets-dir ./my_assets --outputs-d
 - If neither is provided, system generates placeholder images
 
 **Azure Blob Storage (Optional):**
-- `AZURE_STORAGE_CONNECTION_STRING`: Connection string for Azure Blob Storage account
-- `AZURE_CONTAINER_NAME`: Container name for uploads (default: "campaign-assets")
+- `AZURE_STORAGE_CONNECTION_STRING`: Azure credentials (SAS URL or Connection String)
+- `AZURE_CONTAINER_NAME`: Container name for uploads (optional, auto-detected from SAS URL)
 - `AZURE_UPLOAD_ENABLED`: Enable/disable Azure uploads (default: "true")
 
-To get your Azure connection string:
-1. Go to Azure Portal > Storage Accounts
-2. Select your storage account
-3. Navigate to "Access keys" under Security + networking
-4. Copy "Connection string" from Key1 or Key2
+**Two authentication methods supported:**
+
+*Option 1: SAS URL (Recommended - More Secure)*
+1. Go to Azure Portal > Storage Accounts > Your Account
+2. Navigate to "Shared access signature" or your container
+3. Generate a SAS token with appropriate permissions (read, write, create, delete, list)
+4. Copy the full SAS URL (e.g., `https://account.blob.core.windows.net/container?sp=...`)
+5. Paste into `AZURE_STORAGE_CONNECTION_STRING`
+
+*Option 2: Connection String (Full Access)*
+1. Go to Azure Portal > Storage Accounts > Your Account
+2. Navigate to "Access keys" under Security + networking
+3. Copy "Connection string" from Key1 or Key2 (starts with `DefaultEndpointsProtocol=https;...`)
+4. Paste into `AZURE_STORAGE_CONNECTION_STRING`
 
 ### Campaign Brief Format
 Required fields:
