@@ -36,11 +36,11 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 ## Recent Changes
 
 ### October 24, 2025 - Image Processing Improvements
-- **Optimized image resizing algorithm**:
+- **Optimized image resizing with smart cropping**:
   - Uses cover/crop mode to fill entire frame
   - No black padding or letterboxing - genuine aspect ratios
-  - 9:16 fills top-to-bottom, 16:9 fills left-to-right, 1:1 fills completely
-  - Center-crop to preserve subject positioning
+  - Smart crop positioning: 16:9 biased toward top to preserve heads/faces
+  - Portrait (9:16) and square (1:1) use center positioning
   - High-quality LANCZOS resampling for sharp results
 
 ### October 24, 2025 - Enhanced UI with Azure Integration

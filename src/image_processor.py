@@ -14,7 +14,7 @@ class ImageProcessor:
         self.text_padding = 50
     
     def resize_to_aspect_ratio(self, image: Image.Image, target_size: Tuple[int, int]) -> Image.Image:
-        """Resize and crop image to fill target dimensions completely (cover mode)"""
+        """Resize and crop image to fill target dimensions completely (cover mode with smart positioning)"""
         target_width, target_height = target_size
         original_width, original_height = image.size
         
@@ -30,16 +30,27 @@ class ImageProcessor:
         # Resize image to cover target dimensions
         resized = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         
-        # Calculate crop coordinates to center the subject
-        left = (new_width - target_width) // 2
-        top = (new_height - target_height) // 2
+        # Smart crop positioning based on aspect ratio
+        # For landscape (16:9): bias toward top to preserve heads
+        # For portrait (9:16): center horizontally
+        # For square (1:1): center both ways
+        
+        left = (new_width - target_width) // 2  # Center horizontally by default
+        
+        if target_width > target_height:
+            # Landscape format (16:9) - bias toward top to keep heads visible
+            top = int((new_height - target_height) * 0.2)  # 20% from top instead of 50%
+        else:
+            # Portrait or square - center vertically
+            top = (new_height - target_height) // 2
+        
         right = left + target_width
         bottom = top + target_height
         
         # Crop to exact target dimensions
         cropped = resized.crop((left, top, right, bottom))
         
-        logger.info(f"Resized image from {image.size} to {cropped.size} (cover mode, centered crop)")
+        logger.info(f"Resized image from {image.size} to {cropped.size} (cover mode, smart crop)")
         return cropped
     
     def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom") -> Image.Image:
