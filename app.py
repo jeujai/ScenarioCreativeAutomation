@@ -103,12 +103,16 @@ def upload_asset():
         
         filename = secure_filename(file.filename)
         
+        # Save user uploads to uploads/ subdirectory
+        uploads_dir = ASSETS_DIR / 'uploads'
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        
         if product_name:
             normalized_name = product_name.lower().replace(' ', '_').replace('-', '_')
             ext = filename.rsplit('.', 1)[1].lower()
             filename = f"{normalized_name}_hero.{ext}"
         
-        filepath = ASSETS_DIR / filename
+        filepath = uploads_dir / filename
         file.save(filepath)
         
         logger.info(f"Uploaded asset: {filepath}")

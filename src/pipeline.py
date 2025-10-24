@@ -25,8 +25,8 @@ class CreativeAutomationPipeline:
         self.outputs_dir.mkdir(parents=True, exist_ok=True)
     
     def _purge_all_assets(self):
-        """Clear existing outputs only (preserve user-uploaded hero images)"""
-        logger.info("Purging previous outputs...")
+        """Clear outputs and AI-generated assets (preserve user uploads)"""
+        logger.info("Purging previous outputs and AI-generated assets...")
         
         # Always purge outputs directory for fresh creatives
         if self.outputs_dir.exists():
@@ -36,10 +36,17 @@ class CreativeAutomationPipeline:
                 elif item.is_file():
                     item.unlink()
         
-        # NOTE: We no longer purge assets_dir to preserve user-uploaded hero images
-        # The asset_manager will use uploaded images when available, or generate new ones
+        # Purge AI-generated assets (in generated/ subdirectory)
+        generated_dir = self.assets_dir / 'generated'
+        if generated_dir.exists():
+            for item in generated_dir.iterdir():
+                if item.is_file():
+                    item.unlink()
+                    logger.debug(f"Purged generated asset: {item}")
         
-        logger.info("Outputs purged. Ready for generation...")
+        # NOTE: User uploads in uploads/ subdirectory are preserved
+        
+        logger.info("Purge complete. User uploads preserved, ready for fresh generation...")
     
     def run(self, campaign_brief: CampaignBrief) -> tuple[Dict[str, List[Path]], int]:
         self._purge_all_assets()
