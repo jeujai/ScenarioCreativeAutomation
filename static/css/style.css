@@ -621,6 +621,76 @@ textarea {
     border: 1px solid var(--input-border);
 }
 
+/* Logo Preview */
+.logo-preview {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    text-align: center;
+}
+
+.logo-preview img {
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+/* Logo Position Selector */
+.logo-position-selector {
+    margin-top: 16px;
+}
+
+.logo-position-selector .position-label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.position-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.position-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.position-option:hover {
+    border-color: var(--border-color);
+    background: var(--bg-tertiary);
+}
+
+.position-option input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.position-option span {
+    font-size: 13px;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.position-option input[type="radio"]:checked + span {
+    font-weight: 600;
+    color: var(--accent-blue);
+}
+
 /* Azure Button */
 .btn-azure-select {
     background: linear-gradient(135deg, #0078d4, #005a9e);
