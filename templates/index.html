@@ -562,13 +562,14 @@
                     sortedFiles.forEach(file => {
                         const aspectRatio = file.filename.includes('16x9') ? '16-9' : 
                                           file.filename.includes('9x16') ? '9-16' : '1-1';
+                        const cacheBuster = `?t=${Date.now()}`;
                         html += `
                             <div class="image-card aspect-${aspectRatio}">
-                                <img src="${file.url}" alt="${file.product} - ${file.filename}">
+                                <img src="${file.url}${cacheBuster}" alt="${file.product} - ${file.filename}">
                                 <div class="image-info">
                                     <p><strong>${file.product}</strong></p>
                                     <p>${file.filename}</p>
-                                    <a href="${file.url}" download="${file.filename}" class="btn-download">Download</a>
+                                    <a href="${file.url}${cacheBuster}" download="${file.filename}" class="btn-download">Download</a>
                                 </div>
                             </div>
                         `;
