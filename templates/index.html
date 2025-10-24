@@ -91,7 +91,6 @@
                         </svg>
                         Select Logo from Azure
                     </button>
-                    <span id="logoFilename"></span>
                     <input type="hidden" id="azureLogoBlob">
                     
                     <!-- Logo Preview -->
@@ -327,13 +326,10 @@
         async function selectAzureImage(blobName, displayName) {
             if (azureModalType === 'logo') {
                 // Brand logo selection
-                const logoFilename = document.getElementById('logoFilename');
                 const azureLogoBlob = document.getElementById('azureLogoBlob');
                 const logoPreview = document.getElementById('logoPreview');
                 const logoPreviewImage = document.getElementById('logoPreviewImage');
                 
-                logoFilename.textContent = displayName;
-                logoFilename.style.color = '#10b981';
                 azureLogoBlob.value = blobName;
                 
                 // Download and display logo preview
@@ -347,9 +343,9 @@
                     if (downloadResponse.ok) {
                         const downloadData = await downloadResponse.json();
                         // Set preview image source to the downloaded file
-                        logoPreviewImage.src = `/uploads/${downloadData.filename}?t=${Date.now()}`;
+                        logoPreviewImage.src = `/assets/input/uploads/${downloadData.filename}?t=${Date.now()}`;
                         logoPreview.style.display = 'block';
-                        addLog('INFO', `Selected Azure logo: ${displayName}`);
+                        addLog('INFO', `Selected logo: ${displayName}`);
                     } else {
                         addLog('ERROR', `Failed to download logo preview`);
                     }

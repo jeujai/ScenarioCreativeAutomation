@@ -149,13 +149,15 @@ class ImageProcessor:
             x, y = padding, padding
             logger.warning(f"Invalid logo position '{position}', using top-left")
         
+        logger.info(f"Logo positioning: position={position}, image_size=({img_width}x{img_height}), logo_size=({logo_width}x{logo_height}), coordinates=({x},{y})")
+        
         # Paste logo with alpha channel
         img_copy.paste(logo_resized, (x, y), logo_resized)
         
         # Convert back to RGB
         img_copy = img_copy.convert('RGB')
         
-        logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px)")
+        logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
     def _get_font(self, image_width: int) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
