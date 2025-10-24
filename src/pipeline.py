@@ -91,6 +91,10 @@ class CreativeAutomationPipeline:
             logger.error(f"Failed to obtain hero image for {product_name}")
             return []
         
+        # Get brand logo if available
+        brand_logo = self._get_brand_logo()
+        logo_position = campaign_brief.raw_data.get('logo_position', 'top-left')
+        
         output_paths = []
         
         product_dir = self.outputs_dir / self.asset_manager._normalize_name(product_name)
@@ -104,6 +108,15 @@ class CreativeAutomationPipeline:
             message = campaign_brief.get_message()
             final_image = self.image_processor.add_text_overlay(resized_image, message)
             
+            # Add brand logo overlay if available
+            if brand_logo:
+                final_image = self.image_processor.add_logo_overlay(
+                    final_image, 
+                    brand_logo, 
+                    position=logo_position
+                )
+                logger.info(f"Added brand logo at position: {logo_position}")
+            
             output_filename = f"{self.asset_manager._normalize_name(product_name)}_{aspect_name.replace(':', 'x')}.png"
             output_path = product_dir / output_filename
             
@@ -112,6 +125,23 @@ class CreativeAutomationPipeline:
             output_paths.append(output_path)
         
         return output_paths
+    
+    def _get_brand_logo(self) -> Optional[Image.Image]:
+        """Get brand logo from uploads directory if available"""
+        uploads_dir = self.assets_dir / 'uploads'
+        
+        # Look for brand_logo file
+        for pattern in ['brand_logo.*', '*logo*']:
+            matches = list(uploads_dir.glob(pattern))
+            if matches:
+                logo_path = matches[0]
+                logger.info(f"Found brand logo: {logo_path}")
+                try:
+                    return Image.open(logo_path)
+                except Exception as e:
+                    logger.error(f"Failed to load brand logo: {e}")
+        
+        return None
     
     def _get_or_generate_hero_image(self, product: dict, campaign_brief: CampaignBrief) -> Optional[Image.Image]:
         product_name = product.get('name', 'Unknown Product')

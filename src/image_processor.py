@@ -100,6 +100,64 @@ class ImageProcessor:
         logger.info(f"Added text overlay: {text[:30]}...")
         return img_copy
     
+    def add_logo_overlay(
+        self, 
+        image: Image.Image, 
+        logo: Image.Image, 
+        position: str = "top-left",
+        size_ratio: float = 0.15,
+        padding: int = 30
+    ) -> Image.Image:
+        """
+        Add brand logo overlay to image at specified corner position
+        
+        Args:
+            image: Base image to add logo to
+            logo: Logo image to overlay
+            position: One of: "top-left", "top-right", "bottom-left", "bottom-right"
+            size_ratio: Logo size relative to image width (default 0.15 = 15%)
+            padding: Padding from edges in pixels
+        """
+        img_copy = image.copy().convert('RGBA')
+        
+        # Calculate logo dimensions (maintain aspect ratio)
+        img_width, img_height = img_copy.size
+        logo_max_width = int(img_width * size_ratio)
+        
+        # Resize logo maintaining aspect ratio
+        logo_aspect = logo.width / logo.height
+        logo_width = logo_max_width
+        logo_height = int(logo_width / logo_aspect)
+        
+        # Resize logo
+        logo_resized = logo.convert('RGBA').resize(
+            (logo_width, logo_height),
+            Image.Resampling.LANCZOS
+        )
+        
+        # Calculate position coordinates
+        if position == "top-left":
+            x, y = padding, padding
+        elif position == "top-right":
+            x, y = img_width - logo_width - padding, padding
+        elif position == "bottom-left":
+            x, y = padding, img_height - logo_height - padding
+        elif position == "bottom-right":
+            x, y = img_width - logo_width - padding, img_height - logo_height - padding
+        else:
+            # Default to top-left if invalid position
+            x, y = padding, padding
+            logger.warning(f"Invalid logo position '{position}', using top-left")
+        
+        # Paste logo with alpha channel
+        img_copy.paste(logo_resized, (x, y), logo_resized)
+        
+        # Convert back to RGB
+        img_copy = img_copy.convert('RGB')
+        
+        logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px)")
+        return img_copy
+    
     def _get_font(self, image_width: int) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
         font_size = max(int(image_width * 0.05), 32)
         
