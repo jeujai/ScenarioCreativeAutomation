@@ -18,7 +18,7 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 - **Campaign Management**: Supports multi-product campaigns with dynamic form fields, including hero image uploads, brand color selection, and logo integration with positioning controls.
 - **Asset Generation**: GenAI-powered image generation with multi-aspect ratio support (1:1, 9:16, 16:9) and intelligent asset management (reuse existing, generate missing).
 - **Image Processing**: Optimized image resizing with smart cropping (cover/crop mode, smart crop positioning for 16:9, center for 9:16 and 1:1), text overlay, and multi-script font support for multilingual text rendering (Japanese, Korean, Ethiopic, Cyrillic, Latin).
-- **Localization**: Automatic translation of campaign messages to regional languages (supporting 10 regions: Japan, South Korea, China, France, Germany, Spain, Italy, Brazil, Russia, Ethiopia) with graceful fallback and intelligent font selection based on script detection.
+- **Localization**: Automatic translation of campaign messages to regional languages (supporting 11 regions: Japan, South Korea, China, France, Germany, Spain, Italy, Brazil, Russia, Ukraine, Ethiopia) with graceful fallback and intelligent font selection based on script detection.
 - **Output & Storage**: Organizes output by product and aspect ratio, provides real-time asset preview and download, and integrates with Azure Blob Storage for cloud uploads.
 - **CLI**: A command-line interface provides automation capabilities, mirroring the web application's core functions.
 

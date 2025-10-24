@@ -45,6 +45,10 @@ class RegionalTranslator:
             "Clothes that make the man": "Встречают по одёжке",
             "Experience the pure, natural glow. Your skin deserves it": "Почувствуйте чистое, естественное сияние. Ваша кожа этого заслуживает",
         },
+        "Ukraine": {
+            "Clothes that make the man": "Одяг робить людину",
+            "Experience the pure, natural glow. Your skin deserves it": "Відчуйте чисте, природне сяйво. Ваша шкіра на це заслуговує",
+        },
         "Ethiopia": {
             "Clothes that make the man": "ልብስ ሰውን ያደርጋል",
             "Experience the pure, natural glow. Your skin deserves it": "ንጹህ እና ተፈጥሯዊ ብሩህነትን ይለማመዱ። ቆዳዎ ይገባዋል",
