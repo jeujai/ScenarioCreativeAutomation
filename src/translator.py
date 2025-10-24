@@ -69,6 +69,154 @@ class RegionalTranslator:
             "Clothes that make the man": "人要衣裝",
             "Experience the pure, natural glow. Your skin deserves it": "體驗純淨自然的光澤。你的肌膚值得擁有",
         },
+        "Thailand": {
+            "Clothes that make the man": "เสื้อผ้าทำให้คน",
+            "Experience the pure, natural glow. Your skin deserves it": "สัมผัสความเปล่งประกายบริสุทธิ์ตามธรรมชาติ ผิวของคุณสมควรได้รับมัน",
+        },
+        "Vietnam": {
+            "Clothes that make the man": "Quần áo làm nên con người",
+            "Experience the pure, natural glow. Your skin deserves it": "Trải nghiệm vẻ rạng ngời thuần khiết tự nhiên. Làn da của bạn xứng đáng có nó",
+        },
+        "Philippines": {
+            "Clothes that make the man": "Ang damit ay gumagawa ng tao",
+            "Experience the pure, natural glow. Your skin deserves it": "Maranasan ang purong, natural na kinang. Nararapat ito sa iyong balat",
+        },
+        "Singapore": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "Pakistan": {
+            "Clothes that make the man": "لباس آدمی بناتا ہے",
+            "Experience the pure, natural glow. Your skin deserves it": "خالص، قدرتی چمک کا تجربہ کریں۔ آپ کی جلد اس کی مستحق ہے",
+        },
+        "Bangladesh": {
+            "Clothes that make the man": "পোশাক মানুষকে তৈরি করে",
+            "Experience the pure, natural glow. Your skin deserves it": "বিশুদ্ধ, প্রাকৃতিক উজ্জ্বলতা অনুভব করুন। আপনার ত্বক এটি প্রাপ্য",
+        },
+        "Egypt": {
+            "Clothes that make the man": "الملابس تصنع الرجل",
+            "Experience the pure, natural glow. Your skin deserves it": "اختبر التوهج النقي والطبيعي. بشرتك تستحق ذلك",
+        },
+        "Saudi Arabia": {
+            "Clothes that make the man": "الملابس تصنع الرجل",
+            "Experience the pure, natural glow. Your skin deserves it": "اختبر التوهج النقي والطبيعي. بشرتك تستحق ذلك",
+        },
+        "UAE": {
+            "Clothes that make the man": "الملابس تصنع الرجل",
+            "Experience the pure, natural glow. Your skin deserves it": "اختبر التوهج النقي والطبيعي. بشرتك تستحق ذلك",
+        },
+        "Turkey": {
+            "Clothes that make the man": "İnsan kıyafetinden belli olur",
+            "Experience the pure, natural glow. Your skin deserves it": "Saf, doğal parlaklığı deneyimleyin. Cildiniz bunu hak ediyor",
+        },
+        "Israel": {
+            "Clothes that make the man": "הבגדים עושים את האדם",
+            "Experience the pure, natural glow. Your skin deserves it": "חוו את הזוהר הטהור והטבעי. העור שלכם ראוי לכך",
+        },
+        "Iran": {
+            "Clothes that make the man": "لباس آدم را می‌سازد",
+            "Experience the pure, natural glow. Your skin deserves it": "درخشش خالص و طبیعی را تجربه کنید. پوست شما شایسته آن است",
+        },
+        "Mexico": {
+            "Clothes that make the man": "El hábito hace al monje",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimenta el brillo puro y natural. Tu piel lo merece",
+        },
+        "Argentina": {
+            "Clothes that make the man": "La ropa hace al hombre",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimentá el brillo puro y natural. Tu piel lo merece",
+        },
+        "Colombia": {
+            "Clothes that make the man": "El hábito hace al monje",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimenta el brillo puro y natural. Tu piel lo merece",
+        },
+        "Chile": {
+            "Clothes that make the man": "El hábito hace al monje",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimenta el brillo puro y natural. Tu piel lo merece",
+        },
+        "Peru": {
+            "Clothes that make the man": "El hábito hace al monje",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimenta el brillo puro y natural. Tu piel lo merece",
+        },
+        "Netherlands": {
+            "Clothes that make the man": "Kleren maken de man",
+            "Experience the pure, natural glow. Your skin deserves it": "Ervaar de pure, natuurlijke gloed. Je huid verdient het",
+        },
+        "Poland": {
+            "Clothes that make the man": "Ubiór czyni człowieka",
+            "Experience the pure, natural glow. Your skin deserves it": "Doświadcz czystego, naturalnego blasku. Twoja skóra na to zasługuje",
+        },
+        "Sweden": {
+            "Clothes that make the man": "Kläder gör mannen",
+            "Experience the pure, natural glow. Your skin deserves it": "Upplev den rena, naturliga glöden. Din hud förtjänar det",
+        },
+        "Norway": {
+            "Clothes that make the man": "Klær skaper mannen",
+            "Experience the pure, natural glow. Your skin deserves it": "Opplev den rene, naturlige glansen. Huden din fortjener det",
+        },
+        "Denmark": {
+            "Clothes that make the man": "Klæder gør manden",
+            "Experience the pure, natural glow. Your skin deserves it": "Oplev den rene, naturlige glød. Din hud fortjener det",
+        },
+        "Finland": {
+            "Clothes that make the man": "Vaatteet tekevät miehen",
+            "Experience the pure, natural glow. Your skin deserves it": "Koe puhdas, luonnollinen hehku. Ihosi ansaitsee sen",
+        },
+        "Portugal": {
+            "Clothes that make the man": "O hábito faz o monge",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimente o brilho puro e natural. A sua pele merece",
+        },
+        "Greece": {
+            "Clothes that make the man": "Τα ρούχα κάνουν τον άνθρωπο",
+            "Experience the pure, natural glow. Your skin deserves it": "Ζήστε την καθαρή, φυσική λάμψη. Το δέρμα σας το αξίζει",
+        },
+        "Czech Republic": {
+            "Clothes that make the man": "Šaty dělají člověka",
+            "Experience the pure, natural glow. Your skin deserves it": "Zažijte čistou, přírodní záři. Vaše pokožka si to zaslouží",
+        },
+        "Romania": {
+            "Clothes that make the man": "Haina îl face pe om",
+            "Experience the pure, natural glow. Your skin deserves it": "Experimentează strălucirea pură și naturală. Pielea ta merită",
+        },
+        "Hungary": {
+            "Clothes that make the man": "A ruha teszi az embert",
+            "Experience the pure, natural glow. Your skin deserves it": "Tapasztald meg a tiszta, természetes ragyogást. A bőröd megérdemli",
+        },
+        "South Africa": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "Nigeria": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "Kenya": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "Morocco": {
+            "Clothes that make the man": "الملابس تصنع الرجل",
+            "Experience the pure, natural glow. Your skin deserves it": "اختبر التوهج النقي والطبيعي. بشرتك تستحق ذلك",
+        },
+        "Australia": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "New Zealand": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "Canada": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "USA": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
+        "UK": {
+            "Clothes that make the man": "Clothes make the man",
+            "Experience the pure, natural glow. Your skin deserves it": "Experience the pure, natural glow. Your skin deserves it",
+        },
     }
     
     @classmethod

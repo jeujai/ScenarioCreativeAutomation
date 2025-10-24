@@ -161,6 +161,62 @@ class ImageProcessor:
         logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
+    def _detect_thai_text(self, text: str) -> bool:
+        """Detect if text contains Thai characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if 0x0E00 <= code <= 0x0E7F:  # Thai
+                return True
+        return False
+    
+    def _detect_arabic_text(self, text: str) -> bool:
+        """Detect if text contains Arabic/Persian/Urdu characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if (0x0600 <= code <= 0x06FF or   # Arabic
+                0x0750 <= code <= 0x077F or   # Arabic Supplement
+                0x08A0 <= code <= 0x08FF or   # Arabic Extended-A
+                0xFB50 <= code <= 0xFDFF or   # Arabic Presentation Forms-A
+                0xFE70 <= code <= 0xFEFF):    # Arabic Presentation Forms-B
+                return True
+        return False
+    
+    def _detect_hebrew_text(self, text: str) -> bool:
+        """Detect if text contains Hebrew characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if (0x0590 <= code <= 0x05FF or   # Hebrew
+                0xFB1D <= code <= 0xFB4F):    # Hebrew Presentation Forms
+                return True
+        return False
+    
+    def _detect_bengali_text(self, text: str) -> bool:
+        """Detect if text contains Bengali characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if 0x0980 <= code <= 0x09FF:  # Bengali
+                return True
+        return False
+    
+    def _detect_greek_text(self, text: str) -> bool:
+        """Detect if text contains Greek characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if (0x0370 <= code <= 0x03FF or   # Greek and Coptic
+                0x1F00 <= code <= 0x1FFF):    # Greek Extended
+                return True
+        return False
+    
     def _detect_devanagari_text(self, text: str) -> bool:
         """Detect if text contains Devanagari (Hindi) characters"""
         if not text:
@@ -221,13 +277,63 @@ class ImageProcessor:
         font_size = max(int(image_width * 0.05), 32)
         
         # Font paths for different scripts
+        thai_font_path = 'assets/fonts/NotoSansThai-Regular.ttf'
+        arabic_font_path = 'assets/fonts/NotoSansArabic-Regular.ttf'
+        hebrew_font_path = 'assets/fonts/NotoSansHebrew-Regular.ttf'
+        bengali_font_path = 'assets/fonts/NotoSansBengali-Regular.ttf'
+        greek_font_path = 'assets/fonts/NotoSansGreek-Regular.ttf'
         devanagari_font_path = 'assets/fonts/NotoSansDevanagari-Regular.ttf'
         ethiopic_font_path = 'assets/fonts/NotoSansEthiopic-Regular.ttf'
         korean_font_path = 'assets/fonts/NotoSansKR-Regular.ttf'
         traditional_chinese_font_path = 'assets/fonts/NotoSansTC-Regular.ttf'
         japanese_font_path = 'assets/fonts/NotoSansJP-Regular.ttf'
         
-        # Auto-detect Devanagari first (Hindi script)
+        # Auto-detect Thai (must come before others as Thai is very specific)
+        if self._detect_thai_text(text):
+            try:
+                font = ImageFont.truetype(thai_font_path, font_size)
+                logger.info(f"Using Thai font (detected Thai characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Thai font {thai_font_path}: {e}, falling back")
+        
+        # Auto-detect Arabic (for Arabic, Persian, Urdu)
+        if self._detect_arabic_text(text):
+            try:
+                font = ImageFont.truetype(arabic_font_path, font_size)
+                logger.info(f"Using Arabic font (detected Arabic/Persian/Urdu characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Arabic font {arabic_font_path}: {e}, falling back")
+        
+        # Auto-detect Hebrew
+        if self._detect_hebrew_text(text):
+            try:
+                font = ImageFont.truetype(hebrew_font_path, font_size)
+                logger.info(f"Using Hebrew font (detected Hebrew characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Hebrew font {hebrew_font_path}: {e}, falling back")
+        
+        # Auto-detect Bengali
+        if self._detect_bengali_text(text):
+            try:
+                font = ImageFont.truetype(bengali_font_path, font_size)
+                logger.info(f"Using Bengali font (detected Bengali characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Bengali font {bengali_font_path}: {e}, falling back")
+        
+        # Auto-detect Greek
+        if self._detect_greek_text(text):
+            try:
+                font = ImageFont.truetype(greek_font_path, font_size)
+                logger.info(f"Using Greek font (detected Greek characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Greek font {greek_font_path}: {e}, falling back")
+        
+        # Auto-detect Devanagari (Hindi script)
         if self._detect_devanagari_text(text):
             try:
                 font = ImageFont.truetype(devanagari_font_path, font_size)
