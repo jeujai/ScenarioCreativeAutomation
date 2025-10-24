@@ -53,6 +53,76 @@ class ImageProcessor:
         logger.info(f"Resized image from {image.size} to {cropped.size} (cover mode, smart crop)")
         return cropped
     
+    def add_header_overlay(self, image: Image.Image, header_text: str, region: Optional[str] = None) -> Image.Image:
+        """Add a bold header at the top of the image (for product names)"""
+        img_copy = image.copy()
+        draw = ImageDraw.Draw(img_copy)
+        
+        width, height = img_copy.size
+        
+        # Use smaller font size for headers (60% of main text)
+        header_font_size = max(int(width * 0.03), 24)
+        
+        # Try to get a bold font for headers
+        header_font_paths = [
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        ]
+        
+        header_font = None
+        for font_path in header_font_paths:
+            try:
+                header_font = ImageFont.truetype(font_path, header_font_size)
+                break
+            except:
+                continue
+        
+        if header_font is None:
+            header_font = self._get_font(width, text=header_text, region=region)
+        
+        # Calculate text dimensions
+        bbox = draw.textbbox((0, 0), header_text, font=header_font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        
+        # Position at top with padding
+        x = (width - text_width) // 2
+        y = int(self.text_padding * 0.7)  # Slightly less padding for headers
+        
+        # Create overlay for semi-transparent background
+        overlay = Image.new('RGBA', img_copy.size, (0, 0, 0, 0))
+        overlay_draw = ImageDraw.Draw(overlay)
+        
+        # Add subtle dark background for header
+        bg_padding = 15
+        bg_rect = [
+            x - bg_padding,
+            y - bg_padding // 2,
+            x + text_width + bg_padding,
+            y + text_height + bg_padding
+        ]
+        overlay_draw.rectangle(bg_rect, fill=(0, 0, 0, 120))
+        
+        # Add text shadow
+        for offset_x in [-1, 0, 1]:
+            for offset_y in [-1, 0, 1]:
+                if offset_x != 0 or offset_y != 0:
+                    overlay_draw.text(
+                        (x + offset_x, y + offset_y),
+                        header_text,
+                        font=header_font,
+                        fill=(0, 0, 0, 200)
+                    )
+        
+        # Add main text in white
+        overlay_draw.text((x, y), header_text, font=header_font, fill=(255, 255, 255, 255))
+        
+        img_copy = Image.alpha_composite(img_copy.convert('RGBA'), overlay)
+        img_copy = img_copy.convert('RGB')
+        
+        logger.info(f"Added header overlay: {header_text}")
+        return img_copy
+    
     def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom", region: Optional[str] = None) -> Image.Image:
         img_copy = image.copy()
         draw = ImageDraw.Draw(img_copy)
