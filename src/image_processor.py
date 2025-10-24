@@ -187,7 +187,7 @@ class ImageProcessor:
         font_size = max(int(image_width * 0.05), 32)
         
         # CJK font path
-        cjk_font_path = 'assets/fonts/NotoSansJP-Regular.otf'
+        cjk_font_path = 'assets/fonts/NotoSansJP-Regular.ttf'
         
         # Auto-detect: use CJK font ONLY if text actually contains CJK characters
         # Region is ignored to avoid degrading Latin typography in CJK regions
