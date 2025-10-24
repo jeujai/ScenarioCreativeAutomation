@@ -58,7 +58,7 @@ def generate():
         campaign_brief = BriefParser.parse_dict(data)
         
         pipeline = CreativeAutomationPipeline()
-        results = pipeline.run(campaign_brief)
+        results, azure_upload_count = pipeline.run(campaign_brief)
         
         output_files = []
         for product_name, paths in results.items():
@@ -74,7 +74,8 @@ def generate():
         return jsonify({
             'success': True,
             'message': f'Generated {len(output_files)} creatives',
-            'files': output_files
+            'files': output_files,
+            'azure_uploads': azure_upload_count
         })
     
     except ValueError as e:

@@ -7,76 +7,128 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎨 Creative Automation Pipeline</h1>
-            <p class="subtitle">Generate social ad campaign assets with GenAI</p>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-title">
+                <div class="app-logo">⚡</div>
+                <h1>Creative Automation Pipeline</h1>
+            </div>
+            <a href="https://github.com" class="github-link" target="_blank">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+            </a>
         </header>
 
-        <div class="main-content">
-            <section class="form-section">
-                <h2>Create Campaign</h2>
-                
-                <div class="example-buttons">
-                    <button onclick="loadExample('campaign_brief')" class="btn btn-secondary">Load Example 1</button>
-                    <button onclick="loadExample('multi_product_campaign')" class="btn btn-secondary">Load Example 2</button>
-                    <button onclick="clearForm()" class="btn btn-secondary">Clear Form</button>
-                </div>
-
-                <form id="campaignForm">
-                    <div class="form-group">
-                        <label for="region">Region/Market</label>
-                        <input type="text" id="region" name="region" placeholder="e.g., North America, Europe, Asia-Pacific">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="audience">Target Audience</label>
-                        <input type="text" id="audience" name="audience" placeholder="e.g., Tech-savvy professionals aged 30-50">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="message">Campaign Message <span class="required">*</span></label>
-                        <input type="text" id="message" name="message" required placeholder="e.g., Transform Your Morning Routine">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Products <span class="required">*</span> <small>(minimum 2)</small></label>
-                        <div id="productsContainer">
-                            <div class="product-item">
-                                <input type="text" placeholder="Product Name" class="product-name" required>
-                                <input type="text" placeholder="Description (optional)" class="product-description">
-                                <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
-                            </div>
-                            <div class="product-item">
-                                <input type="text" placeholder="Product Name" class="product-name" required>
-                                <input type="text" placeholder="Description (optional)" class="product-description">
-                                <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Campaign Brief</h3>
+            
+            <form id="campaignForm">
+                <!-- Products -->
+                <div class="form-group">
+                    <label>Products</label>
+                    <div id="productsContainer" class="product-container">
+                        <div class="product-item">
+                            <input type="text" placeholder="Product Name" class="product-name" required>
+                            <textarea placeholder="Product Description" class="product-description" rows="2"></textarea>
+                            <div class="hero-image-upload">
+                                <label class="file-upload-btn">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Select Hero Image
+                                    <input type="file" accept="image/*" class="hero-image-input" style="display: none;">
+                                </label>
+                                <span class="hero-image-filename"></span>
                             </div>
                         </div>
-                        <button type="button" onclick="addProduct()" class="btn btn-secondary">+ Add Product</button>
                     </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" id="generateBtn">
-                            Generate Campaign Assets
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <section class="results-section" id="resultsSection" style="display: none;">
-                <h2>Generated Assets</h2>
-                <div id="loadingIndicator" style="display: none;">
-                    <div class="spinner"></div>
-                    <p>Generating campaign assets...</p>
+                    <button type="button" onclick="addProduct()" class="btn btn-add-product">+ Add Product</button>
                 </div>
-                <div id="resultsGrid" class="results-grid"></div>
-            </section>
-        </div>
+
+                <!-- Target Region/Market -->
+                <div class="form-group">
+                    <label>Target Region/Market</label>
+                    <input type="text" id="region" name="region" placeholder="Japan">
+                </div>
+
+                <!-- Target Audience -->
+                <div class="form-group">
+                    <label>Target Audience</label>
+                    <textarea id="audience" name="audience" placeholder="Young professionals interested in sustainable lifestyle products" rows="3"></textarea>
+                </div>
+
+                <!-- Campaign Message -->
+                <div class="form-group">
+                    <label>Campaign Message</label>
+                    <textarea id="message" name="message" placeholder="Experience the pure, natural glow. Your skin deserves it" rows="3" required></textarea>
+                </div>
+
+                <!-- Brand Color -->
+                <div class="form-group">
+                    <label>Brand Color (Hex)</label>
+                    <input type="text" id="brandColor" name="brandColor" placeholder="#000000">
+                </div>
+
+                <!-- Brand Logo -->
+                <div class="form-group">
+                    <label>Brand Logo</label>
+                    <label class="file-upload-btn" style="width: 100%;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Select Logo
+                        <input type="file" accept="image/*" id="brandLogo" style="display: none;">
+                    </label>
+                    <span id="logoFilename"></span>
+                </div>
+
+                <button type="submit" class="btn btn-generate" id="generateBtn">
+                    Generate Creatives
+                </button>
+            </form>
+        </aside>
+
+        <!-- Main Preview Area -->
+        <main class="main-preview">
+            <div class="main-title">
+                <h2>AI-Powered Creative Automation</h2>
+                <p>Turn one campaign brief into dozens of localized, multi-format social ad creatives in minutes.</p>
+            </div>
+            
+            <div id="previewArea" class="preview-content">
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>No creatives generated yet</h3>
+                    <p>Fill out the campaign brief and click "Generate Creatives" to start.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Process Logs -->
+        <section class="process-logs">
+            <div class="logs-header">
+                <h4>Process Logs</h4>
+                <button class="btn-clear-logs" onclick="clearLogs()">Clear</button>
+            </div>
+            <div id="logsContent" class="logs-content">
+                <div class="log-entry">
+                    <span class="log-timestamp">&gt; </span>
+                    <span class="log-level-INFO">INFO</span>
+                    <span class="log-message"> System ready. Waiting for campaign brief...</span>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script>
-        let productCount = 2;
+        let productCount = 1;
 
         function addProduct() {
             productCount++;
@@ -85,75 +137,84 @@
             productItem.className = 'product-item';
             productItem.innerHTML = `
                 <input type="text" placeholder="Product Name" class="product-name" required>
-                <input type="text" placeholder="Description (optional)" class="product-description">
-                <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+                <textarea placeholder="Product Description" class="product-description" rows="2"></textarea>
+                <div class="hero-image-upload">
+                    <label class="file-upload-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Select Hero Image
+                        <input type="file" accept="image/*" class="hero-image-input" style="display: none;">
+                    </label>
+                    <span class="hero-image-filename"></span>
+                </div>
             `;
             container.appendChild(productItem);
+            attachFileListeners();
         }
 
-        function removeProduct(button) {
-            const container = document.getElementById('productsContainer');
-            if (container.children.length > 2) {
-                button.parentElement.remove();
-                productCount--;
-            } else {
-                alert('Minimum 2 products required');
+        function attachFileListeners() {
+            // Hero image inputs
+            document.querySelectorAll('.hero-image-input').forEach(input => {
+                input.removeEventListener('change', handleHeroImageChange);
+                input.addEventListener('change', handleHeroImageChange);
+            });
+
+            // Brand logo input
+            const brandLogoInput = document.getElementById('brandLogo');
+            if (brandLogoInput) {
+                brandLogoInput.removeEventListener('change', handleBrandLogoChange);
+                brandLogoInput.addEventListener('change', handleBrandLogoChange);
             }
         }
 
-        function clearForm() {
-            document.getElementById('campaignForm').reset();
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = `
-                <div class="product-item">
-                    <input type="text" placeholder="Product Name" class="product-name" required>
-                    <input type="text" placeholder="Description (optional)" class="product-description">
-                    <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
-                </div>
-                <div class="product-item">
-                    <input type="text" placeholder="Product Name" class="product-name" required>
-                    <input type="text" placeholder="Description (optional)" class="product-description">
-                    <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
+        function handleHeroImageChange(e) {
+            const file = e.target.files[0];
+            const filenameSpan = e.target.closest('.hero-image-upload').querySelector('.hero-image-filename');
+            if (file) {
+                filenameSpan.textContent = file.name;
+                filenameSpan.style.color = '#10b981';
+            } else {
+                filenameSpan.textContent = '';
+            }
+        }
+
+        function handleBrandLogoChange(e) {
+            const file = e.target.files[0];
+            const filenameSpan = document.getElementById('logoFilename');
+            if (file) {
+                filenameSpan.textContent = file.name;
+                filenameSpan.style.color = '#10b981';
+            } else {
+                filenameSpan.textContent = '';
+            }
+        }
+
+        // Initialize file listeners on page load
+        document.addEventListener('DOMContentLoaded', attachFileListeners);
+
+        function addLog(level, message) {
+            const logsContent = document.getElementById('logsContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-timestamp">&gt; ${timestamp} </span>
+                <span class="log-level-${level}">${level}</span>
+                <span class="log-message"> ${message}</span>
+            `;
+            logsContent.appendChild(logEntry);
+            logsContent.scrollTop = logsContent.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logsContent').innerHTML = `
+                <div class="log-entry">
+                    <span class="log-timestamp">&gt; </span>
+                    <span class="log-level-INFO">INFO</span>
+                    <span class="log-message"> Logs cleared.</span>
                 </div>
             `;
-            productCount = 2;
-            document.getElementById('resultsSection').style.display = 'none';
-        }
-
-        async function loadExample(exampleName) {
-            try {
-                const response = await fetch('/examples');
-                const examples = await response.json();
-                const example = examples[exampleName];
-                
-                if (!example) {
-                    alert('Example not found');
-                    return;
-                }
-
-                document.getElementById('region').value = example.region || '';
-                document.getElementById('audience').value = example.audience || '';
-                document.getElementById('message').value = example.message || '';
-
-                const container = document.getElementById('productsContainer');
-                container.innerHTML = '';
-                productCount = 0;
-
-                example.products.forEach(product => {
-                    const productItem = document.createElement('div');
-                    productItem.className = 'product-item';
-                    productItem.innerHTML = `
-                        <input type="text" placeholder="Product Name" class="product-name" value="${product.name || ''}" required>
-                        <input type="text" placeholder="Description (optional)" class="product-description" value="${product.description || ''}">
-                        <button type="button" onclick="removeProduct(this)" class="btn-remove">Remove</button>
-                    `;
-                    container.appendChild(productItem);
-                    productCount++;
-                });
-            } catch (error) {
-                console.error('Error loading example:', error);
-                alert('Error loading example');
-            }
         }
 
         document.getElementById('campaignForm').addEventListener('submit', async (e) => {
@@ -162,42 +223,90 @@
             const products = [];
             const productItems = document.querySelectorAll('.product-item');
             
-            productItems.forEach(item => {
+            // Upload hero images first
+            for (const item of productItems) {
                 const name = item.querySelector('.product-name').value.trim();
                 const description = item.querySelector('.product-description').value.trim();
+                const heroImageInput = item.querySelector('.hero-image-input');
                 
                 if (name) {
-                    products.push({
+                    const product = {
                         name: name,
                         description: description || ''
-                    });
-                }
-            });
+                    };
 
-            if (products.length < 2) {
-                alert('Please add at least 2 products');
+                    // Upload hero image if provided
+                    if (heroImageInput && heroImageInput.files.length > 0) {
+                        try {
+                            const formData = new FormData();
+                            formData.append('file', heroImageInput.files[0]);
+                            formData.append('product_name', name);
+
+                            const uploadResponse = await fetch('/upload-asset', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            if (uploadResponse.ok) {
+                                const uploadResult = await uploadResponse.json();
+                                addLog('INFO', `Uploaded hero image for ${name}: ${uploadResult.filename}`);
+                            }
+                        } catch (error) {
+                            addLog('WARNING', `Failed to upload hero image for ${name}: ${error.message}`);
+                        }
+                    }
+
+                    products.push(product);
+                }
+            }
+
+            if (products.length < 1) {
+                addLog('ERROR', 'Please add at least 1 product');
                 return;
+            }
+
+            // Upload brand logo if provided
+            const brandLogoInput = document.getElementById('brandLogo');
+            if (brandLogoInput && brandLogoInput.files.length > 0) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', brandLogoInput.files[0]);
+                    formData.append('product_name', 'brand_logo');
+
+                    const uploadResponse = await fetch('/upload-asset', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (uploadResponse.ok) {
+                        addLog('INFO', 'Uploaded brand logo');
+                    }
+                } catch (error) {
+                    addLog('WARNING', `Failed to upload brand logo: ${error.message}`);
+                }
             }
 
             const campaignData = {
                 region: document.getElementById('region').value.trim() || 'Global',
                 audience: document.getElementById('audience').value.trim() || 'General',
                 message: document.getElementById('message').value.trim(),
+                brand_color: document.getElementById('brandColor').value.trim(),
                 products: products
             };
 
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            const resultsSection = document.getElementById('resultsSection');
-            const resultsGrid = document.getElementById('resultsGrid');
+            const previewArea = document.getElementById('previewArea');
             const generateBtn = document.getElementById('generateBtn');
 
-            resultsSection.style.display = 'block';
-            loadingIndicator.style.display = 'block';
-            resultsGrid.innerHTML = '';
+            addLog('INFO', `Starting campaign generation for ${products.length} product(s)...`);
+            
+            previewArea.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Generating campaign assets...</p></div>';
             generateBtn.disabled = true;
             generateBtn.textContent = 'Generating...';
 
             try {
+                addLog('INFO', 'Purging existing assets...');
+                addLog('INFO', 'Generating images with Gemini 2.5 Flash...');
+
                 const response = await fetch('/generate', {
                     method: 'POST',
                     headers: {
@@ -212,7 +321,11 @@
                     throw new Error(result.error || 'Generation failed');
                 }
 
-                loadingIndicator.style.display = 'none';
+                addLog('SUCCESS', `Creative generation pipeline finished successfully!`);
+                addLog('SUCCESS', `Generated ${result.files.length} creatives across ${products.length} product(s)`);
+                if (result.azure_uploads > 0) {
+                    addLog('SUCCESS', `Uploaded ${result.azure_uploads} files to Azure Blob Storage`);
+                }
 
                 const groupedFiles = {};
                 result.files.forEach(file => {
@@ -222,40 +335,37 @@
                     groupedFiles[file.product].push(file);
                 });
 
-                let html = '';
+                let html = '<div class="results-grid">';
                 for (const [product, files] of Object.entries(groupedFiles)) {
-                    html += `
-                        <div class="product-group">
-                            <h3>${product}</h3>
-                            <div class="image-grid">
-                    `;
-                    
                     files.forEach(file => {
                         html += `
                             <div class="image-card">
                                 <img src="${file.url}" alt="${file.product} - ${file.filename}">
                                 <div class="image-info">
+                                    <p><strong>${file.product}</strong></p>
                                     <p>${file.filename}</p>
-                                    <a href="${file.url}" download="${file.filename}" class="btn btn-small">Download</a>
+                                    <a href="${file.url}" download="${file.filename}" class="btn-download">Download</a>
                                 </div>
                             </div>
                         `;
                     });
-
-                    html += `
-                            </div>
-                        </div>
-                    `;
                 }
+                html += '</div>';
 
-                resultsGrid.innerHTML = html;
+                previewArea.innerHTML = html;
 
             } catch (error) {
-                loadingIndicator.style.display = 'none';
-                resultsGrid.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+                addLog('ERROR', `Error: ${error.message}`);
+                previewArea.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>Generation Failed</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
             } finally {
                 generateBtn.disabled = false;
-                generateBtn.textContent = 'Generate Campaign Assets';
+                generateBtn.textContent = 'Generate Creatives';
             }
         });
     </script>

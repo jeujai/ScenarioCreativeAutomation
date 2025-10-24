@@ -35,6 +35,29 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
+### October 24, 2025 - Complete UI/UX Redesign
+- **Redesigned to dark professional theme** matching modern creative tools
+  - Dark charcoal background with accent colors
+  - CSS custom properties for consistent theming
+  - Grid-based layout with sidebar, main preview, and logs panel
+- **New sidebar layout** (300px left panel)
+  - Campaign brief form with all inputs
+  - Collapsible on mobile/tablet
+- **New form fields**:
+  - Hero image upload per product
+  - Brand color (hex) input
+  - Brand logo upload
+  - All uploads integrated with backend `/upload-asset` endpoint
+- **Process logs panel** at bottom
+  - Terminal-style log display
+  - Real-time log updates during generation
+  - Clear functionality
+- **Improved UX**:
+  - File upload indicators (shows selected filename)
+  - Better visual hierarchy
+  - Responsive grid layout
+  - Empty states for preview area
+
 ### October 23, 2025 - Azure Blob Storage Integration
 - **Added Azure Blob Storage integration** for automatic cloud uploads
   - Campaign assets automatically upload to Azure after generation

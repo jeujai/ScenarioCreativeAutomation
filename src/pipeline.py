@@ -25,9 +25,10 @@ class CreativeAutomationPipeline:
         self.outputs_dir.mkdir(parents=True, exist_ok=True)
     
     def _purge_all_assets(self):
-        """Clear all existing outputs and generated assets before each run"""
-        logger.info("Purging all existing assets and outputs...")
+        """Clear existing outputs only (preserve user-uploaded hero images)"""
+        logger.info("Purging previous outputs...")
         
+        # Always purge outputs directory for fresh creatives
         if self.outputs_dir.exists():
             for item in self.outputs_dir.iterdir():
                 if item.is_dir():
@@ -35,14 +36,12 @@ class CreativeAutomationPipeline:
                 elif item.is_file():
                     item.unlink()
         
-        if self.assets_dir.exists():
-            for item in self.assets_dir.iterdir():
-                if item.is_file() and item.suffix == '.png':
-                    item.unlink()
+        # NOTE: We no longer purge assets_dir to preserve user-uploaded hero images
+        # The asset_manager will use uploaded images when available, or generate new ones
         
-        logger.info("All assets purged. Starting fresh generation...")
+        logger.info("Outputs purged. Ready for generation...")
     
-    def run(self, campaign_brief: CampaignBrief) -> Dict[str, List[Path]]:
+    def run(self, campaign_brief: CampaignBrief) -> tuple[Dict[str, List[Path]], int]:
         self._purge_all_assets()
         
         logger.info(f"Starting campaign pipeline for {len(campaign_brief.products)} products")
@@ -64,12 +63,14 @@ class CreativeAutomationPipeline:
         logger.info(f"Total creatives generated: {sum(len(v) for v in results.values())}")
         logger.info(f"{'='*60}\n")
         
+        azure_upload_count = 0
         if self.azure_uploader and self.azure_uploader.enabled:
             logger.info("Uploading campaign assets to Azure Blob Storage...")
             uploaded_urls = self.azure_uploader.upload_directory(self.outputs_dir, prefix="outputs")
-            logger.info(f"Successfully uploaded {len(uploaded_urls)} assets to Azure")
+            azure_upload_count = len(uploaded_urls)
+            logger.info(f"Successfully uploaded {azure_upload_count} assets to Azure")
         
-        return results
+        return results, azure_upload_count
     
     def _process_product(self, product: dict, campaign_brief: CampaignBrief) -> List[Path]:
         product_name = product.get('name', 'Unknown Product')
