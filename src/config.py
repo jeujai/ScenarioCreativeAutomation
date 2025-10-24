@@ -7,9 +7,9 @@ OUTPUTS_DIR = BASE_DIR / "outputs"
 EXAMPLES_DIR = BASE_DIR / "examples"
 
 ASPECT_RATIOS = {
+    "16:9": (1920, 1080),
     "1:1": (1080, 1080),
-    "9:16": (1080, 1920),
-    "16:9": (1920, 1080)
+    "9:16": (1080, 1920)
 }
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
