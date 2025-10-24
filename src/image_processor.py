@@ -59,7 +59,8 @@ class ImageProcessor:
         
         width, height = img_copy.size
         
-        font = self._get_font(width, region=region)
+        # Auto-detect CJK from text content or region
+        font = self._get_font(width, text=text, region=region)
         
         lines = self._wrap_text(text, font, width - (2 * self.text_padding), draw)
         
@@ -160,27 +161,47 @@ class ImageProcessor:
         logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
-    def _get_font(self, image_width: int, region: Optional[str] = None) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
+    def _detect_cjk_text(self, text: str) -> bool:
+        """Detect if text contains CJK (Chinese, Japanese, Korean) characters"""
+        if not text:
+            return False
+        
+        # Unicode ranges for CJK characters (comprehensive coverage)
+        for char in text:
+            code = ord(char)
+            if (0x4E00 <= code <= 0x9FFF or   # CJK Unified Ideographs
+                0x3400 <= code <= 0x4DBF or   # CJK Extension A
+                0x20000 <= code <= 0x2A6DF or # CJK Extension B
+                0x2A700 <= code <= 0x2B73F or # CJK Extension C
+                0x2B740 <= code <= 0x2B81F or # CJK Extension D
+                0x2B820 <= code <= 0x2CEAF or # CJK Extension E
+                0x3040 <= code <= 0x309F or   # Hiragana
+                0x30A0 <= code <= 0x30FF or   # Katakana
+                0xFF65 <= code <= 0xFF9F or   # Halfwidth Katakana
+                0x3000 <= code <= 0x303F or   # CJK Punctuation
+                0xAC00 <= code <= 0xD7AF):    # Hangul
+                return True
+        return False
+    
+    def _get_font(self, image_width: int, text: str = "", region: Optional[str] = None) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
         font_size = max(int(image_width * 0.05), 32)
         
-        # Map regions to CJK fonts (Japan, China, South Korea)
-        cjk_regions = {
-            'japan': 'assets/fonts/NotoSansJP-Regular.otf',
-            'china': 'assets/fonts/NotoSansJP-Regular.otf',  # Fallback to JP for now
-            'south korea': 'assets/fonts/NotoSansJP-Regular.otf',  # Fallback to JP for now
-        }
+        # CJK font path
+        cjk_font_path = 'assets/fonts/NotoSansJP-Regular.otf'
         
-        # Check if region uses CJK characters and try CJK font first
-        if region and region.lower() in cjk_regions:
-            cjk_font_path = cjk_regions[region.lower()]
+        # Auto-detect: use CJK font ONLY if text actually contains CJK characters
+        # Region is ignored to avoid degrading Latin typography in CJK regions
+        needs_cjk = self._detect_cjk_text(text)
+        
+        if needs_cjk:
             try:
                 font = ImageFont.truetype(cjk_font_path, font_size)
-                logger.info(f"Using CJK font for region '{region}': {cjk_font_path}")
+                logger.info(f"Using CJK font (detected CJK characters in text, region={region})")
                 return font
             except Exception as e:
-                logger.warning(f"Failed to load CJK font {cjk_font_path}: {e}")
+                logger.warning(f"Failed to load CJK font {cjk_font_path}: {e}, falling back to Latin")
         
-        # Fallback to standard Latin fonts
+        # Use standard Latin fonts for non-CJK text
         font_paths = [
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
