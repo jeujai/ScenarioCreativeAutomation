@@ -326,7 +326,11 @@ textarea {
 /* Product Results */
 .product-results {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "portrait landscape"
+        "portrait square";
     gap: 24px;
     padding: 40px;
     padding-bottom: 0;
@@ -345,7 +349,15 @@ textarea {
 }
 
 .image-card.aspect-9-16 {
-    grid-row: span 2;
+    grid-area: portrait;
+}
+
+.image-card.aspect-16-9 {
+    grid-area: landscape;
+}
+
+.image-card.aspect-1-1 {
+    grid-area: square;
 }
 
 .image-card:hover {
