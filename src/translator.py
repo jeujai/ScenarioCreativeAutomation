@@ -53,6 +53,22 @@ class RegionalTranslator:
             "Clothes that make the man": "ልብስ ሰውን ያደርጋል",
             "Experience the pure, natural glow. Your skin deserves it": "ንጹህ እና ተፈጥሯዊ ብሩህነትን ይለማመዱ። ቆዳዎ ይገባዋል",
         },
+        "India": {
+            "Clothes that make the man": "कपड़े आदमी बनाते हैं",
+            "Experience the pure, natural glow. Your skin deserves it": "शुद्ध, प्राकृतिक चमक का अनुभव करें। आपकी त्वचा इसकी हकदार है",
+        },
+        "Indonesia": {
+            "Clothes that make the man": "Pakaian membuat orang",
+            "Experience the pure, natural glow. Your skin deserves it": "Rasakan cahaya alami yang murni. Kulit Anda layak mendapatkannya",
+        },
+        "Malaysia": {
+            "Clothes that make the man": "Pakaian membentuk seseorang",
+            "Experience the pure, natural glow. Your skin deserves it": "Rasai cahaya semula jadi yang tulen. Kulit anda layak mendapatnya",
+        },
+        "Taiwan": {
+            "Clothes that make the man": "人要衣裝",
+            "Experience the pure, natural glow. Your skin deserves it": "體驗純淨自然的光澤。你的肌膚值得擁有",
+        },
     }
     
     @classmethod

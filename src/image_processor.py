@@ -161,6 +161,17 @@ class ImageProcessor:
         logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
+    def _detect_devanagari_text(self, text: str) -> bool:
+        """Detect if text contains Devanagari (Hindi) characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if (0x0900 <= code <= 0x097F or   # Devanagari
+                0xA8E0 <= code <= 0xA8FF):    # Devanagari Extended
+                return True
+        return False
+    
     def _detect_ethiopic_text(self, text: str) -> bool:
         """Detect if text contains Ethiopic (Ge'ez) characters"""
         if not text:
@@ -210,11 +221,22 @@ class ImageProcessor:
         font_size = max(int(image_width * 0.05), 32)
         
         # Font paths for different scripts
+        devanagari_font_path = 'assets/fonts/NotoSansDevanagari-Regular.ttf'
         ethiopic_font_path = 'assets/fonts/NotoSansEthiopic-Regular.ttf'
         korean_font_path = 'assets/fonts/NotoSansKR-Regular.ttf'
+        traditional_chinese_font_path = 'assets/fonts/NotoSansTC-Regular.ttf'
         japanese_font_path = 'assets/fonts/NotoSansJP-Regular.ttf'
         
-        # Auto-detect Ethiopic first (Ge'ez script)
+        # Auto-detect Devanagari first (Hindi script)
+        if self._detect_devanagari_text(text):
+            try:
+                font = ImageFont.truetype(devanagari_font_path, font_size)
+                logger.info(f"Using Devanagari font (detected Hindi characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Devanagari font {devanagari_font_path}: {e}, falling back")
+        
+        # Auto-detect Ethiopic (Ge'ez script)
         if self._detect_ethiopic_text(text):
             try:
                 font = ImageFont.truetype(ethiopic_font_path, font_size)
@@ -237,6 +259,15 @@ class ImageProcessor:
         needs_cjk = self._detect_cjk_text(text)
         
         if needs_cjk:
+            # Try Traditional Chinese font first (supports both traditional and simplified)
+            try:
+                font = ImageFont.truetype(traditional_chinese_font_path, font_size)
+                logger.info(f"Using Traditional Chinese/CJK font (detected CJK characters in text, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Traditional Chinese font {traditional_chinese_font_path}: {e}, trying Japanese font")
+            
+            # Fallback to Japanese font (also supports Chinese)
             try:
                 font = ImageFont.truetype(japanese_font_path, font_size)
                 logger.info(f"Using Japanese/CJK font (detected CJK characters in text, region={region})")
