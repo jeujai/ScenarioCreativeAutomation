@@ -14,34 +14,33 @@ class ImageProcessor:
         self.text_padding = 50
     
     def resize_to_aspect_ratio(self, image: Image.Image, target_size: Tuple[int, int]) -> Image.Image:
-        """Resize image to fit within target dimensions without cropping (contain mode)"""
+        """Resize and crop image to fill target dimensions completely (cover mode)"""
         target_width, target_height = target_size
         original_width, original_height = image.size
         
-        # Calculate scaling factor to fit image within target bounds
+        # Calculate scaling factor to cover entire frame
         width_ratio = target_width / original_width
         height_ratio = target_height / original_height
-        scale_factor = min(width_ratio, height_ratio)
+        scale_factor = max(width_ratio, height_ratio)  # Use max to ensure full coverage
         
-        # Calculate new dimensions that fit within target
+        # Calculate new dimensions that will cover the target
         new_width = int(original_width * scale_factor)
         new_height = int(original_height * scale_factor)
         
-        # Resize image to fit within bounds
+        # Resize image to cover target dimensions
         resized = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         
-        # Create canvas with target dimensions and neutral background
-        canvas = Image.new('RGB', target_size, (20, 20, 20))  # Dark background to match theme
+        # Calculate crop coordinates to center the subject
+        left = (new_width - target_width) // 2
+        top = (new_height - target_height) // 2
+        right = left + target_width
+        bottom = top + target_height
         
-        # Calculate position to center the resized image
-        x_offset = (target_width - new_width) // 2
-        y_offset = (target_height - new_height) // 2
+        # Crop to exact target dimensions
+        cropped = resized.crop((left, top, right, bottom))
         
-        # Paste resized image onto canvas
-        canvas.paste(resized, (x_offset, y_offset))
-        
-        logger.info(f"Resized image from {image.size} to {canvas.size} (fit mode, no cropping)")
-        return canvas
+        logger.info(f"Resized image from {image.size} to {cropped.size} (cover mode, centered crop)")
+        return cropped
     
     def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom") -> Image.Image:
         img_copy = image.copy()
