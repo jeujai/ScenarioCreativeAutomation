@@ -35,6 +35,13 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
+### October 24, 2025 - Image Processing Improvements
+- **Improved image resizing algorithm**:
+  - Changed from crop mode to contain/fit mode
+  - Entire subject now visible in all aspect ratios (no heads/bodies cut off)
+  - Uses letterboxing/pillarboxing with dark padding when needed
+  - Maintains image quality while preserving full composition
+
 ### October 24, 2025 - Enhanced UI with Azure Integration
 - **Product management improvements**:
   - Added remove/delete button for each product (red trash icon)
