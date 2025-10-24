@@ -35,28 +35,31 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
-### October 24, 2025 - Complete UI/UX Redesign
+### October 24, 2025 - Complete UI/UX Redesign + Subdirectory Asset Management
 - **Redesigned to dark professional theme** matching modern creative tools
-  - Dark charcoal background with accent colors
+  - Dark charcoal background (#1a1a1a) with accent colors
   - CSS custom properties for consistent theming
-  - Grid-based layout with sidebar, main preview, and logs panel
-- **New sidebar layout** (300px left panel)
-  - Campaign brief form with all inputs
-  - Collapsible on mobile/tablet
+  - Grid-based layout with sidebar (300px), main preview area, and logs panel
+  - Responsive design with mobile/tablet support
 - **New form fields**:
-  - Hero image upload per product
-  - Brand color (hex) input
-  - Brand logo upload
+  - Hero image upload per product (fully functional)
+  - Brand color (hex) input (UI ready, future integration)
+  - Brand logo upload (UI ready, future integration)
   - All uploads integrated with backend `/upload-asset` endpoint
 - **Process logs panel** at bottom
-  - Terminal-style log display
+  - Terminal-style log display with color-coded messages
   - Real-time log updates during generation
   - Clear functionality
+- **Subdirectory asset management** (critical feature)
+  - User uploads saved to `assets/input/uploads/` (preserved across runs)
+  - AI-generated images saved to `assets/input/generated/` (purged for fresh generation)
+  - AssetManager prioritizes user uploads over AI-generated assets
+  - Purge logic ensures fresh AI images while preserving user uploads
 - **Improved UX**:
-  - File upload indicators (shows selected filename)
-  - Better visual hierarchy
-  - Responsive grid layout
+  - File upload indicators (shows selected filename in green)
+  - Better visual hierarchy with organized sections
   - Empty states for preview area
+  - Download buttons for generated creatives
 
 ### October 23, 2025 - Azure Blob Storage Integration
 - **Added Azure Blob Storage integration** for automatic cloud uploads
