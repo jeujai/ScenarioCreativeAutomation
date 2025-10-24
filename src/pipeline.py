@@ -40,7 +40,10 @@ class CreativeAutomationPipeline:
         generated_dir = self.assets_dir / 'generated'
         if generated_dir.exists():
             for item in generated_dir.iterdir():
-                if item.is_file():
+                if item.is_dir():
+                    shutil.rmtree(item)
+                    logger.debug(f"Purged generated directory: {item}")
+                elif item.is_file():
                     item.unlink()
                     logger.debug(f"Purged generated asset: {item}")
         
