@@ -361,7 +361,7 @@
                         const downloadData = await downloadResponse.json();
                         // Set preview image source using the encoded filename
                         const encodedFilename = encodeURIComponent(downloadData.filename);
-                        logoPreviewImage.src = `/assets/input/uploads/${encodedFilename}?t=${Date.now()}`;
+                        logoPreviewImage.src = `/assets/uploads/${encodedFilename}?t=${Date.now()}`;
                         logoPreview.style.display = 'block';
                         addLog('INFO', `Selected logo: ${displayName}`);
                     } else {
