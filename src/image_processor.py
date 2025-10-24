@@ -161,6 +161,16 @@ class ImageProcessor:
         logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
+    def _detect_korean_text(self, text: str) -> bool:
+        """Detect if text contains Korean (Hangul) characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if 0xAC00 <= code <= 0xD7AF:  # Hangul Syllables
+                return True
+        return False
+    
     def _detect_cjk_text(self, text: str) -> bool:
         """Detect if text contains CJK (Chinese, Japanese, Korean) characters"""
         if not text:
@@ -186,8 +196,18 @@ class ImageProcessor:
     def _get_font(self, image_width: int, text: str = "", region: Optional[str] = None) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
         font_size = max(int(image_width * 0.05), 32)
         
-        # CJK font path
-        cjk_font_path = 'assets/fonts/NotoSansJP-Regular.ttf'
+        # Font paths for different scripts
+        korean_font_path = 'assets/fonts/NotoSansKR-Regular.ttf'
+        japanese_font_path = 'assets/fonts/NotoSansJP-Regular.ttf'
+        
+        # Auto-detect Korean first (Hangul has priority)
+        if self._detect_korean_text(text):
+            try:
+                font = ImageFont.truetype(korean_font_path, font_size)
+                logger.info(f"Using Korean font (detected Hangul characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Korean font {korean_font_path}: {e}, trying Japanese font")
         
         # Auto-detect: use CJK font ONLY if text actually contains CJK characters
         # Region is ignored to avoid degrading Latin typography in CJK regions
@@ -195,11 +215,11 @@ class ImageProcessor:
         
         if needs_cjk:
             try:
-                font = ImageFont.truetype(cjk_font_path, font_size)
-                logger.info(f"Using CJK font (detected CJK characters in text, region={region})")
+                font = ImageFont.truetype(japanese_font_path, font_size)
+                logger.info(f"Using Japanese/CJK font (detected CJK characters in text, region={region})")
                 return font
             except Exception as e:
-                logger.warning(f"Failed to load CJK font {cjk_font_path}: {e}, falling back to Latin")
+                logger.warning(f"Failed to load Japanese font {japanese_font_path}: {e}, falling back to Latin")
         
         # Use standard Latin fonts for non-CJK text
         font_paths = [
