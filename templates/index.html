@@ -474,9 +474,22 @@
                     groupedFiles[file.product].push(file);
                 });
 
-                let html = '<div class="results-grid">';
+                let html = '';
                 for (const [product, files] of Object.entries(groupedFiles)) {
-                    files.forEach(file => {
+                    html += '<div class="product-results">';
+                    
+                    // Sort files by aspect ratio: 16:9 first, then 1:1, then 9:16
+                    const sortedFiles = files.sort((a, b) => {
+                        const getOrder = (filename) => {
+                            if (filename.includes('16-9')) return 0;
+                            if (filename.includes('1-1')) return 1;
+                            if (filename.includes('9-16')) return 2;
+                            return 3;
+                        };
+                        return getOrder(a.filename) - getOrder(b.filename);
+                    });
+                    
+                    sortedFiles.forEach(file => {
                         const aspectRatio = file.filename.includes('16-9') ? '16-9' : 
                                           file.filename.includes('9-16') ? '9-16' : '1-1';
                         html += `
@@ -490,8 +503,9 @@
                             </div>
                         `;
                     });
+                    
+                    html += '</div>';
                 }
-                html += '</div>';
 
                 previewArea.innerHTML = html;
 

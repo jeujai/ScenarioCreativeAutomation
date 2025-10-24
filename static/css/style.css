@@ -310,12 +310,17 @@ textarea {
     font-size: 14px;
 }
 
-/* Results Grid */
-.results-grid {
+/* Product Results */
+.product-results {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
     padding: 40px;
+    padding-bottom: 0;
+}
+
+.product-results:last-child {
+    padding-bottom: 40px;
 }
 
 .image-card {
