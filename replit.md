@@ -43,6 +43,19 @@ Built as a technical demonstration for scalable social ad campaign automation. T
   - Portrait (9:16) and square (1:1) use center positioning
   - High-quality LANCZOS resampling for sharp results
 
+### October 24, 2025 - Brand Logo Features
+- **Logo preview display**:
+  - Visual logo preview appears below Azure selection button
+  - Shows actual selected logo image from Azure
+  - Automatic thumbnail display with max 120px height
+- **Logo positioning controls**:
+  - Four corner position options: top-left, top-right, bottom-left, bottom-right
+  - Radio button selector with 2x2 grid layout
+  - Selected position highlighted in blue
+  - Logo automatically placed at chosen corner in all generated creatives
+  - Intelligent sizing: logo sized at 15% of image width, maintains aspect ratio
+  - Smart padding: 30px from edges for clean placement
+
 ### October 24, 2025 - Enhanced UI with Azure Integration
 - **Product management improvements**:
   - Added remove/delete button for each product (red trash icon)

@@ -178,7 +178,7 @@ class ImageProcessor:
     
     def _get_line_height(self, font: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont], draw: ImageDraw.ImageDraw) -> int:
         bbox = draw.textbbox((0, 0), "Ay", font=font)
-        return bbox[3] - bbox[1] + 10
+        return int(bbox[3] - bbox[1] + 10)
     
     def _wrap_text(self, text: str, font: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont], max_width: int, draw: ImageDraw.ImageDraw) -> list:
         words = text.split()

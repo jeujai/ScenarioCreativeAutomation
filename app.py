@@ -96,7 +96,7 @@ def upload_asset():
         file = request.files['file']
         product_name = request.form.get('product_name', '')
         
-        if file.filename == '':
+        if not file.filename or file.filename == '':
             return jsonify({'error': 'No file selected'}), 400
         
         if not allowed_file(file.filename):
