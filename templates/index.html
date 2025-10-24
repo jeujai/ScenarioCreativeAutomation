@@ -438,6 +438,7 @@
 
             addLog('INFO', `Starting campaign generation for ${products.length} product(s)...`);
             
+            previewArea.classList.remove('results-ready');
             previewArea.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Generating campaign assets...</p></div>';
             generateBtn.disabled = true;
             generateBtn.textContent = 'Generating...';
@@ -508,10 +509,12 @@
                 }
                 html += '</div>';
 
+                previewArea.classList.add('results-ready');
                 previewArea.innerHTML = html;
 
             } catch (error) {
                 addLog('ERROR', `Error: ${error.message}`);
+                previewArea.classList.remove('results-ready');
                 previewArea.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">⚠️</div>

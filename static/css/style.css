@@ -275,6 +275,12 @@ textarea {
     padding: 40px;
 }
 
+.preview-content.results-ready {
+    display: block;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
 .empty-state {
     text-align: center;
     max-width: 500px;
@@ -314,6 +320,7 @@ textarea {
 .results-container {
     width: 100%;
     max-width: 1400px;
+    margin: 0 auto;
 }
 
 /* Product Results */
