@@ -8,7 +8,8 @@ from .brief_parser import CampaignBrief
 from .asset_manager import AssetManager
 from .image_generator import ImageGenerator
 from .image_processor import ImageProcessor
-from .config import ASPECT_RATIOS, ASSETS_DIR, OUTPUTS_DIR
+from .azure_uploader import AzureUploader
+from .config import ASPECT_RATIOS, ASSETS_DIR, OUTPUTS_DIR, AZURE_UPLOAD_ENABLED, AZURE_CONTAINER_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ class CreativeAutomationPipeline:
         self.asset_manager = AssetManager(assets_dir)
         self.image_generator = ImageGenerator()
         self.image_processor = ImageProcessor()
+        self.azure_uploader = AzureUploader(container_name=AZURE_CONTAINER_NAME) if AZURE_UPLOAD_ENABLED else None
         self.outputs_dir = Path(outputs_dir)
         self.assets_dir = Path(assets_dir)
         self.outputs_dir.mkdir(parents=True, exist_ok=True)
@@ -61,6 +63,11 @@ class CreativeAutomationPipeline:
         logger.info("Campaign pipeline completed successfully!")
         logger.info(f"Total creatives generated: {sum(len(v) for v in results.values())}")
         logger.info(f"{'='*60}\n")
+        
+        if self.azure_uploader and self.azure_uploader.enabled:
+            logger.info("Uploading campaign assets to Azure Blob Storage...")
+            uploaded_urls = self.azure_uploader.upload_directory(self.outputs_dir, prefix="outputs")
+            logger.info(f"Successfully uploaded {len(uploaded_urls)} assets to Azure")
         
         return results
     

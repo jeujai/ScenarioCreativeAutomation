@@ -30,9 +30,20 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 - ✅ Command-line interface for automation
 - ✅ Example loading functionality
 - ✅ Real-time asset preview and download
+- ✅ Azure Blob Storage integration for cloud uploads
 - ✅ Comprehensive documentation
 
 ## Recent Changes
+
+### October 23, 2025 - Azure Blob Storage Integration
+- **Added Azure Blob Storage integration** for automatic cloud uploads
+  - Campaign assets automatically upload to Azure after generation
+  - Configurable via environment variables
+  - Optional feature (can be disabled)
+  - Supports custom container names
+- Created AzureUploader module for cloud storage management
+- Updated pipeline to upload all campaign creatives to Azure
+- Added Azure configuration to config.py
 
 ### October 23, 2025 - Switched Back to Google Gemini Primary
 - **Switched to Google Gemini** as primary AI image generator
@@ -122,9 +133,22 @@ python main.py examples/campaign_brief.yaml --assets-dir ./my_assets --outputs-d
 ## Configuration
 
 ### Environment Variables
+
+**AI Image Generation:**
 - `GEMINI_API_KEY`: Primary - for Google Gemini image generation (recommended)
 - `OPENAI_API_KEY`: Fallback - for OpenAI DALL-E 3 image generation
 - If neither is provided, system generates placeholder images
+
+**Azure Blob Storage (Optional):**
+- `AZURE_STORAGE_CONNECTION_STRING`: Connection string for Azure Blob Storage account
+- `AZURE_CONTAINER_NAME`: Container name for uploads (default: "campaign-assets")
+- `AZURE_UPLOAD_ENABLED`: Enable/disable Azure uploads (default: "true")
+
+To get your Azure connection string:
+1. Go to Azure Portal > Storage Accounts
+2. Select your storage account
+3. Navigate to "Access keys" under Security + networking
+4. Copy "Connection string" from Key1 or Key2
 
 ### Campaign Brief Format
 Required fields:
@@ -147,7 +171,6 @@ Required fields:
 - No automatic translation (accepts pre-translated messages)
 - Brand compliance not implemented (future enhancement)
 - Legal content checks not implemented (future enhancement)
-- Local filesystem storage only
 - Single campaign processing at a time
 
 ## Future Enhancements
@@ -155,7 +178,7 @@ Required fields:
 - Legal content filtering
 - Advanced localization with auto-translation
 - Performance analytics dashboard
-- Cloud storage integration (Azure, AWS, Dropbox)
+- Additional cloud storage providers (AWS S3, Dropbox)
 - Batch processing for multiple campaigns
 
 ## Technical Notes
