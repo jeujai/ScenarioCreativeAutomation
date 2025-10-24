@@ -203,7 +203,8 @@ def download_azure_image():
         return jsonify({
             'success': True,
             'message': f'Image downloaded successfully: {filename}',
-            'filename': filename
+            'filename': filename,
+            'local_path': str(filepath)
         })
     
     except Exception as e:
