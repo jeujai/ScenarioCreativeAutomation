@@ -109,7 +109,11 @@ class CreativeAutomationPipeline:
             # Get message and translate to regional language
             message = campaign_brief.get_message()
             translated_message = RegionalTranslator.translate(message, campaign_brief.region)
-            final_image = self.image_processor.add_text_overlay(resized_image, translated_message)
+            final_image = self.image_processor.add_text_overlay(
+                resized_image, 
+                translated_message, 
+                region=campaign_brief.region
+            )
             
             # Add brand logo overlay if available
             if brand_logo:

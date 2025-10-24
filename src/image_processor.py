@@ -53,13 +53,13 @@ class ImageProcessor:
         logger.info(f"Resized image from {image.size} to {cropped.size} (cover mode, smart crop)")
         return cropped
     
-    def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom") -> Image.Image:
+    def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom", region: Optional[str] = None) -> Image.Image:
         img_copy = image.copy()
         draw = ImageDraw.Draw(img_copy)
         
         width, height = img_copy.size
         
-        font = self._get_font(width)
+        font = self._get_font(width, region=region)
         
         lines = self._wrap_text(text, font, width - (2 * self.text_padding), draw)
         
@@ -160,9 +160,27 @@ class ImageProcessor:
         logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
-    def _get_font(self, image_width: int) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
+    def _get_font(self, image_width: int, region: Optional[str] = None) -> Union[ImageFont.FreeTypeFont, ImageFont.ImageFont]:
         font_size = max(int(image_width * 0.05), 32)
         
+        # Map regions to CJK fonts (Japan, China, South Korea)
+        cjk_regions = {
+            'japan': 'assets/fonts/NotoSansJP-Regular.otf',
+            'china': 'assets/fonts/NotoSansJP-Regular.otf',  # Fallback to JP for now
+            'south korea': 'assets/fonts/NotoSansJP-Regular.otf',  # Fallback to JP for now
+        }
+        
+        # Check if region uses CJK characters and try CJK font first
+        if region and region.lower() in cjk_regions:
+            cjk_font_path = cjk_regions[region.lower()]
+            try:
+                font = ImageFont.truetype(cjk_font_path, font_size)
+                logger.info(f"Using CJK font for region '{region}': {cjk_font_path}")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load CJK font {cjk_font_path}: {e}")
+        
+        # Fallback to standard Latin fonts
         font_paths = [
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
@@ -176,6 +194,7 @@ class ImageProcessor:
             except:
                 continue
         
+        logger.warning("No suitable font found, using default")
         return ImageFont.load_default()
     
     def _get_line_height(self, font: Union[ImageFont.FreeTypeFont, ImageFont.ImageFont], draw: ImageDraw.ImageDraw) -> int:
