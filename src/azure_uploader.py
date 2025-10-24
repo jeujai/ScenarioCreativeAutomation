@@ -138,3 +138,64 @@ class AzureUploader:
         except Exception as e:
             logger.error(f"Error deleting blob from Azure: {e}")
             return False
+    
+    def list_blobs(self, prefix: str = "", only_images: bool = True) -> List[dict]:
+        """List blobs in the container, optionally filtering by prefix and image types"""
+        if not self.enabled:
+            logger.debug("Azure listing skipped (not enabled)")
+            return []
+        
+        try:
+            container_client = self.blob_service_client.get_container_client(self.container_name)
+            blobs = []
+            image_extensions = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
+            
+            for blob in container_client.list_blobs(name_starts_with=prefix):
+                # Filter for images only if requested
+                if only_images:
+                    ext = Path(blob.name).suffix.lower()
+                    if ext not in image_extensions:
+                        continue
+                
+                blobs.append({
+                    'name': blob.name,
+                    'size': blob.size,
+                    'last_modified': blob.last_modified.isoformat() if blob.last_modified else None
+                })
+            
+            logger.info(f"Listed {len(blobs)} blobs from Azure container: {self.container_name}")
+            return blobs
+            
+        except Exception as e:
+            logger.error(f"Error listing blobs from Azure: {e}")
+            return []
+    
+    def download_blob(self, blob_name: str, local_path: Path) -> bool:
+        """Download a blob from Azure to local filesystem (secure - validates blob exists)"""
+        if not self.enabled:
+            logger.debug("Azure download skipped (not enabled)")
+            return False
+        
+        try:
+            blob_client = self.blob_service_client.get_blob_client(
+                container=self.container_name,
+                blob=blob_name
+            )
+            
+            # Verify blob exists before downloading
+            if not blob_client.exists():
+                logger.error(f"Blob does not exist: {blob_name}")
+                return False
+            
+            # Download blob to local file
+            local_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(local_path, 'wb') as f:
+                blob_data = blob_client.download_blob()
+                f.write(blob_data.readall())
+            
+            logger.info(f"Downloaded blob from Azure: {blob_name} -> {local_path}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error downloading blob from Azure: {e}")
+            return False

@@ -9,6 +9,7 @@ import logging
 from src.brief_parser import BriefParser, CampaignBrief
 from src.pipeline import CreativeAutomationPipeline
 from src.config import ASSETS_DIR, OUTPUTS_DIR
+from src.azure_uploader import AzureUploader
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SESSION_SECRET', 'dev-secret-key-change-in-production')
@@ -136,6 +137,78 @@ def serve_output(filename):
 @app.route('/assets/<path:filename>')
 def serve_asset(filename):
     return send_from_directory(ASSETS_DIR, filename)
+
+
+@app.route('/azure-images')
+def azure_images():
+    """List available images from Azure Blob Storage"""
+    try:
+        uploader = AzureUploader()
+        
+        if not uploader.enabled:
+            return jsonify({
+                'error': 'Azure Blob Storage not configured. Please set AZURE_STORAGE_CONNECTION_STRING environment variable.'
+            }), 400
+        
+        images = uploader.list_blobs(only_images=True)
+        
+        return jsonify({
+            'success': True,
+            'images': images,
+            'count': len(images)
+        })
+    
+    except Exception as e:
+        logger.error(f"Error listing Azure images: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/download-azure-image', methods=['POST'])
+def download_azure_image():
+    """Download an image from Azure Blob Storage (secure - no SSRF vulnerability)"""
+    try:
+        data = request.get_json()
+        blob_name = data.get('blob_name')
+        product_name = data.get('product_name', '')
+        
+        if not blob_name:
+            return jsonify({'error': 'No blob name provided'}), 400
+        
+        uploader = AzureUploader()
+        
+        if not uploader.enabled:
+            return jsonify({'error': 'Azure Blob Storage not configured'}), 400
+        
+        # Determine filename
+        uploads_dir = ASSETS_DIR / 'uploads'
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+        if product_name:
+            normalized_name = product_name.lower().replace(' ', '_').replace('-', '_')
+            ext = Path(blob_name).suffix
+            filename = f"{normalized_name}_hero{ext}"
+        else:
+            filename = Path(blob_name).name
+        
+        filepath = uploads_dir / filename
+        
+        # Download via Azure SDK (secure - validates blob exists in our container)
+        success = uploader.download_blob(blob_name, filepath)
+        
+        if not success:
+            return jsonify({'error': 'Failed to download blob from Azure'}), 500
+        
+        logger.info(f"Downloaded Azure blob to: {filepath}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Image downloaded successfully: {filename}',
+            'filename': filename
+        })
+    
+    except Exception as e:
+        logger.error(f"Error downloading Azure image: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/health')

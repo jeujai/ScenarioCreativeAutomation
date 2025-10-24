@@ -35,6 +35,20 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
+### October 24, 2025 - Enhanced UI with Azure Integration
+- **Product management improvements**:
+  - Added remove/delete button for each product (red trash icon)
+  - Minimum 1 product required (prevents deleting last product)
+- **Color picker palette**:
+  - Changed brand color from text input to visual color picker
+  - Live hex value display updates as you select colors
+- **Azure Blob Storage image browser**:
+  - Hero images now selected from Azure container instead of local upload
+  - Modal image browser with grid layout
+  - Click to select images directly from Azure
+  - Images automatically downloaded to uploads/ directory
+  - New backend endpoints: `/azure-images` and `/download-azure-image`
+
 ### October 24, 2025 - Complete UI/UX Redesign + Subdirectory Asset Management
 - **Redesigned to dark professional theme** matching modern creative tools
   - Dark charcoal background (#1a1a1a) with accent colors
