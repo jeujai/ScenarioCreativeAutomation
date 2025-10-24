@@ -479,12 +479,12 @@
                 for (const [product, files] of Object.entries(groupedFiles)) {
                     html += '<div class="product-results">';
                     
-                    // Sort files by aspect ratio: 16:9 first, then 1:1, then 9:16
+                    // Sort files by aspect ratio: 9:16 first, then 16:9, then 1:1
                     const sortedFiles = files.sort((a, b) => {
                         const getOrder = (filename) => {
-                            if (filename.includes('16-9')) return 0;
-                            if (filename.includes('1-1')) return 1;
-                            if (filename.includes('9-16')) return 2;
+                            if (filename.includes('9-16')) return 0;
+                            if (filename.includes('16-9')) return 1;
+                            if (filename.includes('1-1')) return 2;
                             return 3;
                         };
                         return getOrder(a.filename) - getOrder(b.filename);
