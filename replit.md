@@ -42,12 +42,16 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 - **Color picker palette**:
   - Changed brand color from text input to visual color picker
   - Live hex value display updates as you select colors
-- **Azure Blob Storage image browser**:
-  - Hero images now selected from Azure container instead of local upload
-  - Modal image browser with grid layout
+- **Azure Blob Storage integration**:
+  - Hero images selected from Azure container via modal image browser
+  - Brand logo also sources from Azure container
+  - Modal shows actual image previews from Azure
   - Click to select images directly from Azure
-  - Images automatically downloaded to uploads/ directory
+  - Images automatically downloaded to uploads/ directory via secure Azure SDK
   - New backend endpoints: `/azure-images` and `/download-azure-image`
+- **UI enhancements**:
+  - Generate Creatives button now styled in red gradient
+  - Consistent Azure cloud icon for all Azure selection buttons
 
 ### October 24, 2025 - Complete UI/UX Redesign + Subdirectory Asset Management
 - **Redesigned to dark professional theme** matching modern creative tools
