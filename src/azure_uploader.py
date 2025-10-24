@@ -157,8 +157,15 @@ class AzureUploader:
                     if ext not in image_extensions:
                         continue
                 
+                # Get blob URL for preview (safe to display)
+                blob_client = self.blob_service_client.get_blob_client(
+                    container=self.container_name,
+                    blob=blob.name
+                )
+                
                 blobs.append({
                     'name': blob.name,
+                    'url': blob_client.url,
                     'size': blob.size,
                     'last_modified': blob.last_modified.isoformat() if blob.last_modified else None
                 })
