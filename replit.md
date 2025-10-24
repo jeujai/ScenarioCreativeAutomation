@@ -52,6 +52,7 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 - **UI enhancements**:
   - Generate Creatives button now styled in red gradient
   - Consistent Azure cloud icon for all Azure selection buttons
+  - Results gallery layout: 16:9 images span full width, 1:1 and 9:16 side-by-side below
 
 ### October 24, 2025 - Complete UI/UX Redesign + Subdirectory Asset Management
 - **Redesigned to dark professional theme** matching modern creative tools

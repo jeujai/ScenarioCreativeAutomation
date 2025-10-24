@@ -477,8 +477,10 @@
                 let html = '<div class="results-grid">';
                 for (const [product, files] of Object.entries(groupedFiles)) {
                     files.forEach(file => {
+                        const aspectRatio = file.filename.includes('16-9') ? '16-9' : 
+                                          file.filename.includes('9-16') ? '9-16' : '1-1';
                         html += `
-                            <div class="image-card">
+                            <div class="image-card aspect-${aspectRatio}">
                                 <img src="${file.url}" alt="${file.product} - ${file.filename}">
                                 <div class="image-info">
                                     <p><strong>${file.product}</strong></p>

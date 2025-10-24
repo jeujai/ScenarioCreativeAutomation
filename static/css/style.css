@@ -313,7 +313,7 @@ textarea {
 /* Results Grid */
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
     padding: 40px;
 }
@@ -324,6 +324,10 @@ textarea {
     overflow: hidden;
     border: 1px solid var(--border-color);
     transition: transform 0.2s;
+}
+
+.image-card.aspect-16-9 {
+    grid-column: span 2;
 }
 
 .image-card:hover {
