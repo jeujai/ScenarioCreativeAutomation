@@ -9,6 +9,7 @@ from .asset_manager import AssetManager
 from .image_generator import ImageGenerator
 from .image_processor import ImageProcessor
 from .azure_uploader import AzureUploader
+from .translator import RegionalTranslator
 from .config import ASPECT_RATIOS, ASSETS_DIR, OUTPUTS_DIR, AZURE_UPLOAD_ENABLED, AZURE_CONTAINER_NAME
 
 logger = logging.getLogger(__name__)
@@ -93,7 +94,7 @@ class CreativeAutomationPipeline:
         
         # Get brand logo if available
         brand_logo = self._get_brand_logo()
-        logo_position = campaign_brief.raw_data.get('logo_position', 'top-left')
+        logo_position = campaign_brief.logo_position
         
         output_paths = []
         
@@ -105,8 +106,10 @@ class CreativeAutomationPipeline:
             
             resized_image = self.image_processor.resize_to_aspect_ratio(hero_image, aspect_size)
             
+            # Get message and translate to regional language
             message = campaign_brief.get_message()
-            final_image = self.image_processor.add_text_overlay(resized_image, message)
+            translated_message = RegionalTranslator.translate(message, campaign_brief.region)
+            final_image = self.image_processor.add_text_overlay(resized_image, translated_message)
             
             # Add brand logo overlay if available
             if brand_logo:

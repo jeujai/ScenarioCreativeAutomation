@@ -38,8 +38,8 @@ class ImageProcessor:
         left = (new_width - target_width) // 2  # Center horizontally by default
         
         if target_width > target_height:
-            # Landscape format (16:9) - bias toward top to keep heads visible
-            top = int((new_height - target_height) * 0.2)  # 20% from top instead of 50%
+            # Landscape format (16:9) - anchor at top to prevent head cropping
+            top = 0  # Anchor at top edge to preserve heads/faces
         else:
             # Portrait or square - center vertically
             top = (new_height - target_height) // 2

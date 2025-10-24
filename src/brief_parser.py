@@ -13,6 +13,12 @@ class CampaignBrief:
         self.localized_messages = data.get("localized_messages", {})
         self.raw_data = data
     
+    @property
+    def logo_position(self) -> str:
+        """Get logo position, handling both camelCase (from frontend) and snake_case formats"""
+        # Check for camelCase first (from web form), then snake_case, then default
+        return self.raw_data.get('logoPosition') or self.raw_data.get('logo_position', 'top-left')
+    
     def validate(self) -> bool:
         if not self.products:
             raise ValueError("Campaign brief must include at least one product")
@@ -23,6 +29,7 @@ class CampaignBrief:
         return True
     
     def get_message(self, language: str = "en") -> str:
+        """Get message in specified language, falling back to default message"""
         return self.localized_messages.get(language, self.message)
 
 

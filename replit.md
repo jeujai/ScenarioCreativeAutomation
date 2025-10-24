@@ -35,6 +35,28 @@ Built as a technical demonstration for scalable social ad campaign automation. T
 
 ## Recent Changes
 
+### October 24, 2025 - Critical Fixes and Regional Translation (LATEST)
+- **Fixed logo positioning bug**:
+  - Logo now correctly positions in selected corner (top-left, top-right, bottom-left, bottom-right)
+  - Added property in CampaignBrief to handle both camelCase (from frontend) and snake_case formats
+  - Pipeline now uses campaign_brief.logo_position property for reliable positioning
+- **Fixed 16:9 head cropping issue**:
+  - Changed crop positioning from 20% bias to 0% (anchor at top edge)
+  - Ensures heads/faces remain fully visible in landscape (16:9) images
+  - Portrait (9:16) and square (1:1) continue to use center crop
+- **Added default form values**:
+  - Product 1: "Business Casual for a Superman" / "Mild mannered reporter blending into a culturally specific newsroom environment through appropriate business casual attire (as a disguise) and horned-rimmed glasses as part of his cover identity (using the same model in every image)"
+  - Product 2: "Super Suit for a Superman" / "Superman blending into a culturally specific metropolitan environment (using the same person as used in the first product)"
+  - Region: "Japan"
+  - Audience: "Young, style-conscious professionals"
+  - Message: "Clothes that make the man"
+- **Implemented regional language translation**:
+  - Campaign messages automatically translate to regional language
+  - Supports 8 regions: Japan, France, Spain, Germany, China, South Korea, Italy, Brazil
+  - Japanese translation for "Clothes that make the man": "服が人をつくる"
+  - Falls back to original message if translation unavailable
+  - Easy to extend with additional regions and translations
+
 ### October 24, 2025 - Image Processing Improvements
 - **Optimized image resizing with smart cropping**:
   - Uses cover/crop mode to fill entire frame
@@ -178,6 +200,7 @@ creative-automation-pipeline/
 - **Web Framework**: Flask
 - **Image Processing**: Pillow (PIL)
 - **GenAI**: Google Gemini (primary), OpenAI DALL-E 3 (fallback)
+- **Translation**: Custom RegionalTranslator with dictionary for 8 regions
 - **Data Formats**: JSON, YAML
 - **Dependencies**: flask, pillow, pyyaml, requests, google-genai, openai, python-dotenv, werkzeug
 
