@@ -41,6 +41,14 @@ class RegionalTranslator:
             "Clothes that make the man": "As roupas fazem o homem",
             "Experience the pure, natural glow. Your skin deserves it": "Experimente o brilho puro e natural. Sua pele merece",
         },
+        "Russia": {
+            "Clothes that make the man": "Встречают по одёжке",
+            "Experience the pure, natural glow. Your skin deserves it": "Почувствуйте чистое, естественное сияние. Ваша кожа этого заслуживает",
+        },
+        "Ethiopia": {
+            "Clothes that make the man": "ልብስ ሰውን ያደርጋል",
+            "Experience the pure, natural glow. Your skin deserves it": "ንጹህ እና ተፈጥሯዊ ብሩህነትን ይለማመዱ። ቆዳዎ ይገባዋል",
+        },
     }
     
     @classmethod

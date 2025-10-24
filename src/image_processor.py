@@ -161,6 +161,19 @@ class ImageProcessor:
         logger.info(f"Added logo overlay at position: {position} ({logo_width}x{logo_height}px at {x},{y})")
         return img_copy
     
+    def _detect_ethiopic_text(self, text: str) -> bool:
+        """Detect if text contains Ethiopic (Ge'ez) characters"""
+        if not text:
+            return False
+        for char in text:
+            code = ord(char)
+            if (0x1200 <= code <= 0x137F or   # Ethiopic
+                0x1380 <= code <= 0x139F or   # Ethiopic Supplement
+                0x2D80 <= code <= 0x2DDF or   # Ethiopic Extended
+                0xAB00 <= code <= 0xAB2F):    # Ethiopic Extended-A
+                return True
+        return False
+    
     def _detect_korean_text(self, text: str) -> bool:
         """Detect if text contains Korean (Hangul) characters"""
         if not text:
@@ -197,10 +210,20 @@ class ImageProcessor:
         font_size = max(int(image_width * 0.05), 32)
         
         # Font paths for different scripts
+        ethiopic_font_path = 'assets/fonts/NotoSansEthiopic-Regular.ttf'
         korean_font_path = 'assets/fonts/NotoSansKR-Regular.ttf'
         japanese_font_path = 'assets/fonts/NotoSansJP-Regular.ttf'
         
-        # Auto-detect Korean first (Hangul has priority)
+        # Auto-detect Ethiopic first (Ge'ez script)
+        if self._detect_ethiopic_text(text):
+            try:
+                font = ImageFont.truetype(ethiopic_font_path, font_size)
+                logger.info(f"Using Ethiopic font (detected Ge'ez characters, region={region})")
+                return font
+            except Exception as e:
+                logger.warning(f"Failed to load Ethiopic font {ethiopic_font_path}: {e}, falling back")
+        
+        # Auto-detect Korean (Hangul has priority)
         if self._detect_korean_text(text):
             try:
                 font = ImageFont.truetype(korean_font_path, font_size)
