@@ -310,6 +310,12 @@ textarea {
     font-size: 14px;
 }
 
+/* Results Container */
+.results-container {
+    width: 100%;
+    max-width: 1400px;
+}
+
 /* Product Results */
 .product-results {
     display: grid;
@@ -517,7 +523,7 @@ textarea {
         font-size: 1.8em;
     }
 
-    .results-grid {
+    .product-results {
         grid-template-columns: 1fr;
         padding: 20px;
     }

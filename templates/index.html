@@ -474,7 +474,7 @@
                     groupedFiles[file.product].push(file);
                 });
 
-                let html = '';
+                let html = '<div class="results-container">';
                 for (const [product, files] of Object.entries(groupedFiles)) {
                     html += '<div class="product-results">';
                     
@@ -506,6 +506,7 @@
                     
                     html += '</div>';
                 }
+                html += '</div>';
 
                 previewArea.innerHTML = html;
 
