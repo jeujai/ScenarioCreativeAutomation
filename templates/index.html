@@ -324,17 +324,39 @@
             }
         }
 
-        function selectAzureImage(blobName, displayName) {
+        async function selectAzureImage(blobName, displayName) {
             if (azureModalType === 'logo') {
                 // Brand logo selection
                 const logoFilename = document.getElementById('logoFilename');
                 const azureLogoBlob = document.getElementById('azureLogoBlob');
+                const logoPreview = document.getElementById('logoPreview');
+                const logoPreviewImage = document.getElementById('logoPreviewImage');
                 
                 logoFilename.textContent = displayName;
                 logoFilename.style.color = '#10b981';
                 azureLogoBlob.value = blobName;
                 
-                addLog('INFO', `Selected Azure logo: ${displayName}`);
+                // Download and display logo preview
+                try {
+                    const downloadResponse = await fetch('/download-azure-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ blob_name: blobName })
+                    });
+                    
+                    if (downloadResponse.ok) {
+                        const downloadData = await downloadResponse.json();
+                        // Set preview image source to the downloaded file
+                        logoPreviewImage.src = `/uploads/${downloadData.filename}?t=${Date.now()}`;
+                        logoPreview.style.display = 'block';
+                        addLog('INFO', `Selected Azure logo: ${displayName}`);
+                    } else {
+                        addLog('ERROR', `Failed to download logo preview`);
+                    }
+                } catch (error) {
+                    addLog('ERROR', `Error loading logo preview: ${error.message}`);
+                }
+                
             } else if (currentAzureButton) {
                 // Hero image selection
                 const uploadDiv = currentAzureButton.closest('.hero-image-upload');
@@ -453,11 +475,16 @@
                 }
             }
 
+            // Get selected logo position
+            const selectedPosition = document.querySelector('input[name="logoPosition"]:checked');
+            const logoPosition = selectedPosition ? selectedPosition.value : 'top-left';
+            
             const campaignData = {
                 region: document.getElementById('region').value.trim() || 'Global',
                 audience: document.getElementById('audience').value.trim() || 'General',
                 message: document.getElementById('message').value.trim(),
                 brand_color: document.getElementById('brandColor').value.trim(),
+                logo_position: logoPosition,
                 products: products
             };
 
