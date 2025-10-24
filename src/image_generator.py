@@ -55,7 +55,7 @@ class ImageGenerator:
             logger.info(f"Generating image with Google Gemini: {prompt[:50]}...")
             
             response = self.gemini_client.models.generate_content(
-                model="gemini-2.0-flash-preview-image-generation",
+                model="gemini-2.5-flash-image",
                 contents=prompt,
                 config=self.genai_types.GenerateContentConfig(
                     response_modalities=['TEXT', 'IMAGE']
