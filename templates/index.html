@@ -482,17 +482,17 @@
                     // Sort files by aspect ratio: 9:16 first, then 16:9, then 1:1
                     const sortedFiles = files.sort((a, b) => {
                         const getOrder = (filename) => {
-                            if (filename.includes('9-16')) return 0;
-                            if (filename.includes('16-9')) return 1;
-                            if (filename.includes('1-1')) return 2;
+                            if (filename.includes('9x16')) return 0;
+                            if (filename.includes('16x9')) return 1;
+                            if (filename.includes('1x1')) return 2;
                             return 3;
                         };
                         return getOrder(a.filename) - getOrder(b.filename);
                     });
                     
                     sortedFiles.forEach(file => {
-                        const aspectRatio = file.filename.includes('16-9') ? '16-9' : 
-                                          file.filename.includes('9-16') ? '9-16' : '1-1';
+                        const aspectRatio = file.filename.includes('16x9') ? '16-9' : 
+                                          file.filename.includes('9x16') ? '9-16' : '1-1';
                         html += `
                             <div class="image-card aspect-${aspectRatio}">
                                 <img src="${file.url}" alt="${file.product} - ${file.filename}">
