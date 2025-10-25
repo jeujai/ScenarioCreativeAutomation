@@ -185,14 +185,17 @@ class CreativeAutomationPipeline:
     
     def _get_or_generate_hero_image(self, product: dict, campaign_brief: CampaignBrief) -> Optional[Image.Image]:
         product_name = product.get('name', 'Unknown Product')
+        description = product.get('description', '')
         
-        existing_asset = self.asset_manager.get_asset_path(product_name)
+        # Check if hero image was explicitly uploaded by user
+        uploaded_asset = self.asset_manager.get_uploaded_asset_path(product_name)
         
-        if existing_asset:
-            logger.info(f"Using existing asset: {existing_asset}")
-            return Image.open(existing_asset)
+        if uploaded_asset:
+            logger.info(f"Using user-uploaded hero image: {uploaded_asset}")
+            return Image.open(uploaded_asset)
         
-        logger.info(f"No existing asset found. Generating new image...")
+        # Otherwise, always generate fresh region-specific image via GenAI
+        logger.info(f"Generating region-specific image for {campaign_brief.region}...")
         
         prompt = self.image_generator.create_product_prompt(
             product,
@@ -203,7 +206,8 @@ class CreativeAutomationPipeline:
         generated_image = self.image_generator.generate_image(prompt)
         
         if generated_image:
-            self.asset_manager.save_asset(generated_image, product_name)
+            # Save to generated folder (not uploads) for reference
+            self.asset_manager.save_generated_asset(generated_image, product_name, campaign_brief.region)
             return generated_image
         
         return None
