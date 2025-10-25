@@ -143,6 +143,8 @@ def serve_asset(filename):
 def azure_images():
     """List available images from Azure Blob Storage"""
     try:
+        folder = request.args.get('folder', '')
+        
         uploader = AzureUploader()
         
         if not uploader.enabled:
@@ -150,12 +152,13 @@ def azure_images():
                 'error': 'Azure Blob Storage not configured. Please set AZURE_STORAGE_CONNECTION_STRING environment variable.'
             }), 400
         
-        images = uploader.list_blobs(only_images=True)
+        images = uploader.list_blobs(prefix=folder, only_images=True)
         
         return jsonify({
             'success': True,
             'images': images,
-            'count': len(images)
+            'count': len(images),
+            'folder': folder
         })
     
     except Exception as e:

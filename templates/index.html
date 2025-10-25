@@ -415,8 +415,10 @@
             modal.style.display = 'flex';
             gallery.innerHTML = '<div class="azure-loading">Loading images from Azure...</div>';
             
+            const folder = azureModalType === 'logo' ? 'assets/input/logos' : 'assets/output';
+            
             try {
-                const response = await fetch('/azure-images');
+                const response = await fetch(`/azure-images?folder=${encodeURIComponent(folder)}`);
                 const data = await response.json();
                 
                 if (!response.ok) {
@@ -424,13 +426,12 @@
                 }
                 
                 if (data.images.length === 0) {
-                    gallery.innerHTML = '<div class="azure-empty">No images found in Azure container</div>';
+                    gallery.innerHTML = `<div class="azure-empty">No images found in Azure folder: ${folder}</div>`;
                     return;
                 }
                 
                 let html = '<div class="azure-grid">';
                 data.images.forEach(image => {
-                    // Display image preview but store blob name for secure download
                     html += `
                         <div class="azure-image-item" onclick="selectAzureImage('${image.name.replace(/'/g, "\\'")}', '${image.name.replace(/'/g, "\\'")}')">
                             <img src="${image.url}" alt="${image.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -445,6 +446,8 @@
                 });
                 html += '</div>';
                 gallery.innerHTML = html;
+                
+                addLog('INFO', `Loaded ${data.count} images from Azure folder: ${folder}`);
                 
             } catch (error) {
                 gallery.innerHTML = `<div class="azure-error">Error: ${error.message}</div>`;

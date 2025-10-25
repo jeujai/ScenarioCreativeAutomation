@@ -67,7 +67,7 @@ class AzureUploader:
                 container_client.create_container()
                 logger.info(f"Created Azure container: {self.container_name}")
         except Exception as e:
-            logger.error(f"Error ensuring container exists: {e}")
+            logger.debug(f"Container check skipped (limited SAS permissions): {e}")
     
     def upload_file(self, local_path: Path, blob_name: Optional[str] = None) -> Optional[str]:
         if not self.enabled:
