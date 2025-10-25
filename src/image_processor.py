@@ -137,20 +137,21 @@ class ImageProcessor:
         )
         
         # Make white/near-white pixels transparent for better blending
-        logo_data = list(logo_resized.getdata())
-        new_logo_data = []
-        for pixel in logo_data:
-            r, g, b, a = pixel
-            # Check if pixel is white or very close to white (RGB values > 240)
-            if r > 240 and g > 240 and b > 240:
-                # Make it fully transparent
-                new_logo_data.append((r, g, b, 0))
-            else:
-                # Keep original pixel with its alpha
-                new_logo_data.append((r, g, b, a))
-        
-        logo_resized.putdata(new_logo_data)
-        logger.info("Applied white-to-transparent conversion for logo background")
+        pixels = logo_resized.load()
+        if pixels is not None:
+            width, height = logo_resized.size
+            
+            for y in range(height):
+                for x in range(width):
+                    pixel = pixels[x, y]
+                    if isinstance(pixel, tuple) and len(pixel) == 4:
+                        r, g, b, a = pixel
+                        # Check if pixel is white or very close to white (RGB values > 240)
+                        if r > 240 and g > 240 and b > 240:
+                            # Make it fully transparent
+                            pixels[x, y] = (r, g, b, 0)
+            
+            logger.info("Applied white-to-transparent conversion for logo background")
         
         # Calculate position coordinates
         if position == "top-left":
