@@ -2,6 +2,7 @@ import logging
 import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image
 
 from .brief_parser import CampaignBrief
@@ -56,17 +57,30 @@ class CreativeAutomationPipeline:
         # Versioning enabled - no purge, incremental versions instead
         logger.info(f"Starting campaign pipeline for {len(campaign_brief.products)} products")
         logger.info(f"Region: {campaign_brief.region}, Audience: {campaign_brief.audience}")
+        logger.info("⚡ Using parallel processing for faster generation")
         
         results = {}
         
-        for product in campaign_brief.products:
-            product_name = product.get('name', 'Unknown Product')
-            logger.info(f"\n{'='*60}")
-            logger.info(f"Processing product: {product_name}")
-            logger.info(f"{'='*60}")
+        # Process all products in parallel using ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=len(campaign_brief.products)) as executor:
+            # Submit all product processing tasks
+            future_to_product = {
+                executor.submit(self._process_product, product, campaign_brief): product
+                for product in campaign_brief.products
+            }
             
-            product_results = self._process_product(product, campaign_brief)
-            results[product_name] = product_results
+            # Collect results as they complete
+            for future in as_completed(future_to_product):
+                product = future_to_product[future]
+                product_name = product.get('name', 'Unknown Product')
+                
+                try:
+                    product_results = future.result()
+                    results[product_name] = product_results
+                    logger.info(f"✓ Completed: {product_name}")
+                except Exception as e:
+                    logger.error(f"Error processing {product_name}: {e}", exc_info=True)
+                    results[product_name] = []
         
         logger.info(f"\n{'='*60}")
         logger.info("Campaign pipeline completed successfully!")
