@@ -16,7 +16,7 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 
 ### Feature Specifications
 - **Campaign Management**: Supports multi-product campaigns (default: 4 products including Superman and Batman themed examples) with dynamic form fields, hero image uploads from Azure with preview and delete functionality, brand color selection (applied to campaign message text), and logo integration with positioning controls.
-- **Asset Generation**: GenAI-powered image generation with multi-aspect ratio support (1:1, 9:16, 16:9), smart incremental version numbering (scans existing files to find max version + 1, defaults to v1 if no files exist), and intelligent hero image workflow:
+- **Asset Generation**: GenAI-powered image generation with multi-aspect ratio support (1:1, 9:16, 16:9), fresh versioning system (outputs folder is cleared on each generation, all files start at v1), and intelligent hero image workflow:
   - **With uploaded hero**: Reuses user-provided image across all outputs (only text overlay changes per region)
   - **Without uploaded hero**: Generates fresh region-specific images via GenAI for each campaign, creating culturally appropriate backgrounds (e.g., Russia scene for Russia, Japan scene for Japan)
 - **Image Processing**: Optimized image resizing with smart cropping (cover/crop mode, smart crop positioning for 16:9, center for 9:16 and 1:1), campaign message text overlay with customizable brand color, and multi-script font support for multilingual text rendering (Thai, Arabic, Hebrew, Bengali, Greek, Devanagari, Ethiopic, Korean, Traditional Chinese, Japanese, Cyrillic, Latin).
@@ -26,7 +26,7 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 
 ### System Design Choices
 - **Modular Architecture**: Ensures maintainability and clear separation of concerns.
-- **Smart Incremental Versioning**: Preserves all generated assets with intelligent version numbering that scans existing files to find the highest version and increments (v1, v2, v3...), building a creative library over time without data loss or duplicate uploads to Azure.
+- **Fresh Versioning System**: Outputs folder is automatically cleared on each "Generate Creatives" click, ensuring all new campaigns start fresh at v1. This prevents version number bloat and keeps the results gallery clean and focused on the current generation.
 - **Intelligent Hero Image Logic**: The system distinguishes between user-uploaded hero images (stored in `/assets/input/uploads/`) and AI-generated assets (stored in `/assets/input/generated/`). User uploads are reused across all variants, while missing heroes trigger fresh GenAI generation with region-specific prompts for culturally relevant backgrounds.
 - **Organized Asset Storage**: Maintains separate directories for different asset types:
   - `/assets/input/uploads/` - User-uploaded product hero images (reused if present)

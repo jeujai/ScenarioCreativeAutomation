@@ -56,6 +56,13 @@ def generate():
         
         logger.info(f"Received campaign data: {data}")
         
+        # Clear outputs folder to start fresh versioning at v1
+        import shutil
+        if OUTPUTS_DIR.exists():
+            shutil.rmtree(OUTPUTS_DIR)
+        OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+        logger.info("Cleared outputs folder - versioning will start at v1")
+        
         campaign_brief = BriefParser.parse_dict(data)
         
         pipeline = CreativeAutomationPipeline()
