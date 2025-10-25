@@ -45,6 +45,11 @@
                                 </button>
                                 <input type="hidden" class="azure-image-url">
                                 <div class="hero-image-preview" style="display: none;">
+                                    <button type="button" class="btn-remove-hero" onclick="removeHeroImage(this)" title="Remove Hero Image">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
                                     <img class="hero-preview-image" src="" alt="Hero Image Preview">
                                 </div>
                             </div>
@@ -68,6 +73,11 @@
                                 </button>
                                 <input type="hidden" class="azure-image-url">
                                 <div class="hero-image-preview" style="display: none;">
+                                    <button type="button" class="btn-remove-hero" onclick="removeHeroImage(this)" title="Remove Hero Image">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
                                     <img class="hero-preview-image" src="" alt="Hero Image Preview">
                                 </div>
                             </div>
@@ -212,6 +222,11 @@
                     </button>
                     <input type="hidden" class="azure-image-url">
                     <div class="hero-image-preview" style="display: none;">
+                        <button type="button" class="btn-remove-hero" onclick="removeHeroImage(this)" title="Remove Hero Image">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                         <img class="hero-preview-image" src="" alt="Hero Image Preview">
                     </div>
                 </div>
@@ -279,6 +294,20 @@
             productItem.remove();
             productCount--;
             addLog('INFO', 'Product removed');
+        }
+
+        function removeHeroImage(button) {
+            const uploadDiv = button.closest('.hero-image-upload');
+            const heroPreview = uploadDiv.querySelector('.hero-image-preview');
+            const heroPreviewImage = uploadDiv.querySelector('.hero-preview-image');
+            const blobInput = uploadDiv.querySelector('.azure-image-url');
+            
+            // Clear the preview
+            heroPreview.style.display = 'none';
+            heroPreviewImage.src = '';
+            blobInput.value = '';
+            
+            addLog('INFO', 'Hero image removed');
         }
 
         let currentAzureButton = null;
