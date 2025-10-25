@@ -61,17 +61,16 @@ class CreativeAutomationPipeline:
         
         results = {}
         
-        # Process all products in parallel using ThreadPoolExecutor
+        # Process all products in parallel while preserving order
         with ThreadPoolExecutor(max_workers=len(campaign_brief.products)) as executor:
-            # Submit all product processing tasks
-            future_to_product = {
-                executor.submit(self._process_product, product, campaign_brief): product
+            # Submit all tasks and maintain product order
+            futures = [
+                (product, executor.submit(self._process_product, product, campaign_brief))
                 for product in campaign_brief.products
-            }
+            ]
             
-            # Collect results as they complete
-            for future in as_completed(future_to_product):
-                product = future_to_product[future]
+            # Collect results in original product order
+            for product, future in futures:
                 product_name = product.get('name', 'Unknown Product')
                 
                 try:
