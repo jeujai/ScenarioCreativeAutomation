@@ -53,11 +53,22 @@ class ImageProcessor:
         logger.info(f"Resized image from {image.size} to {cropped.size} (cover mode, smart crop)")
         return cropped
     
-    def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom", region: Optional[str] = None) -> Image.Image:
+    def add_text_overlay(self, image: Image.Image, text: str, position: str = "bottom", region: Optional[str] = None, text_color: Optional[str] = None) -> Image.Image:
         img_copy = image.copy()
         draw = ImageDraw.Draw(img_copy)
         
         width, height = img_copy.size
+        
+        # Convert hex color to RGB tuple, or use default white
+        if text_color and text_color.startswith('#'):
+            # Parse hex color (e.g., #6366f1 or #FFFFFF)
+            hex_color = text_color.lstrip('#')
+            if len(hex_color) == 6:
+                rgb_color = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+            else:
+                rgb_color = self.text_color  # Fallback to default white
+        else:
+            rgb_color = self.text_color  # Default white
         
         # Auto-detect CJK from text content or region
         font = self._get_font(width, text=text, region=region)
@@ -92,13 +103,13 @@ class ImageProcessor:
                             fill=(*self.text_shadow_color, 180)
                         )
             
-            overlay_draw.text((x, y), line, font=font, fill=(*self.text_color, 255))
+            overlay_draw.text((x, y), line, font=font, fill=(*rgb_color, 255))
             y += line_height
         
         img_copy = Image.alpha_composite(img_copy.convert('RGBA'), overlay)
         img_copy = img_copy.convert('RGB')
         
-        logger.info(f"Added text overlay: {text[:30]}...")
+        logger.info(f"Added text overlay with color {text_color or 'default'}: {text[:30]}...")
         return img_copy
     
     def add_logo_overlay(
