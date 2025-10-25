@@ -76,7 +76,16 @@ class CreativeAutomationPipeline:
         azure_upload_count = 0
         if self.azure_uploader and self.azure_uploader.enabled:
             logger.info("Uploading campaign assets to Azure Blob Storage...")
-            uploaded_urls = self.azure_uploader.upload_directory(self.outputs_dir, prefix="assets")
+            uploaded_urls = []
+            
+            for product_name, paths in results.items():
+                for path in paths:
+                    relative_path = path.relative_to(self.outputs_dir)
+                    blob_name = f"assets/{relative_path}"
+                    url = self.azure_uploader.upload_file(path, blob_name)
+                    if url:
+                        uploaded_urls.append(url)
+            
             azure_upload_count = len(uploaded_urls)
             logger.info(f"Successfully uploaded {azure_upload_count} assets to Azure")
         
