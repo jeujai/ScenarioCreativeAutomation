@@ -43,8 +43,10 @@
                                     </svg>
                                     Select Hero from Azure
                                 </button>
-                                <span class="hero-image-filename"></span>
                                 <input type="hidden" class="azure-image-url">
+                                <div class="hero-image-preview" style="display: none;">
+                                    <img class="hero-preview-image" src="" alt="Hero Image Preview">
+                                </div>
                             </div>
                         </div>
                         <div class="product-item">
@@ -64,8 +66,10 @@
                                     </svg>
                                     Select Hero from Azure
                                 </button>
-                                <span class="hero-image-filename"></span>
                                 <input type="hidden" class="azure-image-url">
+                                <div class="hero-image-preview" style="display: none;">
+                                    <img class="hero-preview-image" src="" alt="Hero Image Preview">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -206,8 +210,10 @@
                         </svg>
                         Select Hero from Azure
                     </button>
-                    <span class="hero-image-filename"></span>
                     <input type="hidden" class="azure-image-url">
+                    <div class="hero-image-preview" style="display: none;">
+                        <img class="hero-preview-image" src="" alt="Hero Image Preview">
+                    </div>
                 </div>
             `;
             container.appendChild(productItem);
@@ -230,14 +236,8 @@
         }
 
         function handleHeroImageChange(e) {
-            const file = e.target.files[0];
-            const filenameSpan = e.target.closest('.hero-image-upload').querySelector('.hero-image-filename');
-            if (file) {
-                filenameSpan.textContent = file.name;
-                filenameSpan.style.color = '#10b981';
-            } else {
-                filenameSpan.textContent = '';
-            }
+            // Hero images are now only selected from Azure, not uploaded locally
+            // This function is kept for compatibility but not used
         }
 
         function handleBrandLogoChange(e) {
@@ -374,14 +374,34 @@
             } else if (currentAzureButton) {
                 // Hero image selection
                 const uploadDiv = currentAzureButton.closest('.hero-image-upload');
-                const filenameSpan = uploadDiv.querySelector('.hero-image-filename');
+                const heroPreview = uploadDiv.querySelector('.hero-image-preview');
+                const heroPreviewImage = uploadDiv.querySelector('.hero-preview-image');
                 const blobInput = uploadDiv.querySelector('.azure-image-url');
                 
-                filenameSpan.textContent = displayName;
-                filenameSpan.style.color = '#10b981';
                 blobInput.value = blobName;
                 
-                addLog('INFO', `Selected Azure image: ${displayName}`);
+                // Download and display hero image preview
+                try {
+                    const productName = currentAzureButton.closest('.product-item').querySelector('.product-name').value.trim();
+                    const downloadResponse = await fetch('/download-azure-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ blob_name: blobName, product_name: productName })
+                    });
+                    
+                    if (downloadResponse.ok) {
+                        const downloadData = await downloadResponse.json();
+                        // Set preview image source using the encoded filename
+                        const encodedFilename = encodeURIComponent(downloadData.filename);
+                        heroPreviewImage.src = `/assets/uploads/${encodedFilename}?t=${Date.now()}`;
+                        heroPreview.style.display = 'block';
+                        addLog('INFO', `Selected hero image: ${displayName}`);
+                    } else {
+                        addLog('ERROR', `Failed to download hero image preview`);
+                    }
+                } catch (error) {
+                    addLog('ERROR', `Error loading hero image preview: ${error.message}`);
+                }
             }
             closeAzureModal();
         }
