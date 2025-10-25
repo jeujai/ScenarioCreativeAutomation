@@ -92,9 +92,35 @@ class CreativeAutomationPipeline:
         return results, azure_upload_count
     
     def _get_next_version_number(self, product_dir: Path, base_filename: str) -> int:
-        """Find the next available version number by scanning existing files"""
+        """Find the next available version number by scanning Azure Blob Storage"""
         import re
         
+        # If Azure is enabled, check Azure for the latest version
+        if self.azure_uploader and self.azure_uploader.enabled:
+            try:
+                product_name = product_dir.name
+                prefix = f"assets/{product_name}/"
+                
+                # List all blobs for this product
+                blobs = self.azure_uploader.list_blobs(prefix=prefix, only_images=True)
+                
+                max_version = 0
+                pattern = re.compile(rf"{re.escape(base_filename)}_v(\d+)\.png")
+                
+                for blob in blobs:
+                    blob_filename = Path(blob['name']).name
+                    match = pattern.match(blob_filename)
+                    if match:
+                        version = int(match.group(1))
+                        max_version = max(max_version, version)
+                
+                logger.info(f"Azure check: Found max version {max_version} for {base_filename}")
+                return max_version + 1
+            
+            except Exception as e:
+                logger.warning(f"Failed to check Azure for version number: {e}. Falling back to local check.")
+        
+        # Fallback to local check if Azure is not available
         if not product_dir.exists():
             return 1
         
