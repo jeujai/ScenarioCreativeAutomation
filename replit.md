@@ -12,11 +12,11 @@ Not specified.
 The web interface features a modern, responsive design with a dark, professional theme inspired by creative tools. It utilizes a grid-based layout with a sidebar, main preview area, and a real-time process logs panel. Key UI elements include a visual color picker, Azure Blob Storage integration for image selection with previews, a redesigned results gallery layout for optimal viewing of different aspect ratios, and product section headers that appear above each product's image gallery for clear organization.
 
 ### Technical Implementations
-The system is built on a modular architecture using Python 3.11 and Flask for the web application. It integrates GenAI for image generation (Google Gemini as primary, OpenAI DALL-E 3 as fallback), Pillow for image processing, and a custom RegionalTranslator for localized messages. Asset management distinguishes between user uploads (preserved) and AI-generated assets (purged for fresh generation). It supports campaign brief parsing from JSON and YAML formats.
+The system is built on a modular architecture using Python 3.11 and Flask for the web application. It integrates GenAI for image generation (Google Gemini as primary, OpenAI DALL-E 3 as fallback), Pillow for image processing, and a custom RegionalTranslator for localized messages. Asset management uses incremental versioning to preserve all generated assets (e.g., `product_16x9_v1.png`, `product_16x9_v2.png`), allowing users to build a library of creative variations over time. It supports campaign brief parsing from JSON and YAML formats.
 
 ### Feature Specifications
-- **Campaign Management**: Supports multi-product campaigns with dynamic form fields, including hero image uploads, brand color selection (applied to campaign message text), and logo integration with positioning controls.
-- **Asset Generation**: GenAI-powered image generation with multi-aspect ratio support (1:1, 9:16, 16:9) and intelligent asset management (reuse existing, generate missing).
+- **Campaign Management**: Supports multi-product campaigns (default: 4 products including Superman and Batman themed examples) with dynamic form fields, hero image uploads from Azure with preview and delete functionality, brand color selection (applied to campaign message text), and logo integration with positioning controls.
+- **Asset Generation**: GenAI-powered image generation with multi-aspect ratio support (1:1, 9:16, 16:9), incremental version numbering for all generated assets, and intelligent asset management (reuse existing hero images, generate missing via GenAI).
 - **Image Processing**: Optimized image resizing with smart cropping (cover/crop mode, smart crop positioning for 16:9, center for 9:16 and 1:1), campaign message text overlay with customizable brand color, and multi-script font support for multilingual text rendering (Thai, Arabic, Hebrew, Bengali, Greek, Devanagari, Ethiopic, Korean, Traditional Chinese, Japanese, Cyrillic, Latin).
 - **Localization**: Automatic translation of campaign messages to 50+ global regions with graceful fallback and intelligent font selection based on script detection. Covers major markets across Asia-Pacific (Japan, South Korea, China, Taiwan, Thailand, Vietnam, Philippines, Singapore, India, Pakistan, Bangladesh, Indonesia, Malaysia, Australia, New Zealand), Middle East & North Africa (Saudi Arabia, UAE, Egypt, Israel, Iran, Morocco, Turkey), Europe (France, Germany, Spain, Italy, UK, Netherlands, Poland, Sweden, Norway, Denmark, Finland, Portugal, Greece, Czech Republic, Romania, Hungary, Russia, Ukraine), Americas (USA, Canada, Mexico, Brazil, Argentina, Colombia, Chile, Peru), and Africa (South Africa, Nigeria, Kenya, Ethiopia).
 - **Output & Storage**: Organizes output by product and aspect ratio, provides real-time asset preview and download, and integrates with Azure Blob Storage for cloud uploads.
@@ -24,7 +24,7 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 
 ### System Design Choices
 - **Modular Architecture**: Ensures maintainability and clear separation of concerns.
-- **Auto-Purge Assets**: Clears previous AI-generated assets before each new generation to ensure freshness.
+- **Incremental Versioning**: Preserves all generated assets with automatic version numbering (v1, v2, v3...) to build a creative library over time without data loss.
 - **Fallback Mechanism**: Prioritizes Google Gemini, then OpenAI DALL-E 3, and finally placeholder images for robust image generation.
 - **Extensible Format**: Supports both JSON and YAML for campaign briefs.
 - **Smart Text Overlay**: Dynamically sizes and wraps text based on image dimensions for optimal readability.

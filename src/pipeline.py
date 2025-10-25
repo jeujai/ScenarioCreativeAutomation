@@ -53,8 +53,7 @@ class CreativeAutomationPipeline:
         logger.info("Purge complete. User uploads preserved, ready for fresh generation...")
     
     def run(self, campaign_brief: CampaignBrief) -> tuple[Dict[str, List[Path]], int]:
-        self._purge_all_assets()
-        
+        # Versioning enabled - no purge, incremental versions instead
         logger.info(f"Starting campaign pipeline for {len(campaign_brief.products)} products")
         logger.info(f"Region: {campaign_brief.region}, Audience: {campaign_brief.audience}")
         
@@ -82,6 +81,16 @@ class CreativeAutomationPipeline:
             logger.info(f"Successfully uploaded {azure_upload_count} assets to Azure")
         
         return results, azure_upload_count
+    
+    def _get_next_version_number(self, product_dir: Path, base_filename: str) -> int:
+        """Find the next available version number for a product asset"""
+        version = 1
+        while True:
+            versioned_filename = f"{base_filename}_v{version}.png"
+            versioned_path = product_dir / versioned_filename
+            if not versioned_path.exists():
+                return version
+            version += 1
     
     def _process_product(self, product: dict, campaign_brief: CampaignBrief) -> List[Path]:
         product_name = product.get('name', 'Unknown Product')
@@ -125,11 +134,14 @@ class CreativeAutomationPipeline:
                 )
                 logger.info(f"Added brand logo at position: {logo_position}")
             
-            output_filename = f"{self.asset_manager._normalize_name(product_name)}_{aspect_name.replace(':', 'x')}.png"
+            # Generate versioned filename
+            base_filename = f"{self.asset_manager._normalize_name(product_name)}_{aspect_name.replace(':', 'x')}"
+            version_number = self._get_next_version_number(product_dir, base_filename)
+            output_filename = f"{base_filename}_v{version_number}.png"
             output_path = product_dir / output_filename
             
             final_image.save(output_path, quality=95)
-            logger.info(f"Saved creative: {output_path}")
+            logger.info(f"Saved creative: {output_path} (version {version_number})")
             output_paths.append(output_path)
         
         return output_paths
