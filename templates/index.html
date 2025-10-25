@@ -547,6 +547,7 @@
                 let html = '<div class="results-container">';
                 for (const [product, files] of Object.entries(groupedFiles)) {
                     html += '<div class="product-results">';
+                    html += `<h2 class="product-section-header">${product}</h2>`;
                     
                     // Sort files by aspect ratio: 9:16 first, then 16:9, then 1:1
                     const sortedFiles = files.sort((a, b) => {

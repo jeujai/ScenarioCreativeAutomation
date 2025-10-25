@@ -106,18 +106,11 @@ class CreativeAutomationPipeline:
             
             resized_image = self.image_processor.resize_to_aspect_ratio(hero_image, aspect_size)
             
-            # Add product header at the top
-            final_image = self.image_processor.add_header_overlay(
-                resized_image,
-                product_name.upper(),
-                region=campaign_brief.region
-            )
-            
             # Get message and translate to regional language
             message = campaign_brief.get_message()
             translated_message = RegionalTranslator.translate(message, campaign_brief.region)
             final_image = self.image_processor.add_text_overlay(
-                final_image, 
+                resized_image, 
                 translated_message, 
                 region=campaign_brief.region
             )
