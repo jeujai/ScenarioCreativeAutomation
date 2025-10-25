@@ -19,6 +19,12 @@ class CampaignBrief:
         # Check for camelCase first (from web form), then snake_case, then default
         return self.raw_data.get('logoPosition') or self.raw_data.get('logo_position', 'top-left')
     
+    @property
+    def brand_color(self) -> str:
+        """Get brand color from campaign data (hex color code)"""
+        # Handle both camelCase (from frontend) and snake_case formats
+        return self.raw_data.get('brandColor') or self.raw_data.get('brand_color', '#FFFFFF')
+    
     def validate(self) -> bool:
         if not self.products:
             raise ValueError("Campaign brief must include at least one product")
