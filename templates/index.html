@@ -466,16 +466,16 @@
                     const downloadResponse = await fetch('/download-azure-image', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ blob_name: blobName })
+                        body: JSON.stringify({ blob_name: blobName, is_logo: true })
                     });
                     
                     if (downloadResponse.ok) {
                         const downloadData = await downloadResponse.json();
-                        // Set preview image source using the encoded filename
+                        // Set preview image source using the encoded filename (from logos directory)
                         const encodedFilename = encodeURIComponent(downloadData.filename);
-                        logoPreviewImage.src = `/assets/uploads/${encodedFilename}?t=${Date.now()}`;
+                        logoPreviewImage.src = `/assets/logos/${encodedFilename}?t=${Date.now()}`;
                         logoPreview.style.display = 'block';
-                        addLog('INFO', `Selected logo: ${displayName}`);
+                        addLog('INFO', `Selected logo from logos folder: ${displayName}`);
                     } else {
                         addLog('ERROR', `Failed to download logo preview`);
                     }

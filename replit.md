@@ -25,11 +25,15 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 ### System Design Choices
 - **Modular Architecture**: Ensures maintainability and clear separation of concerns.
 - **Incremental Versioning**: Preserves all generated assets with automatic version numbering (v1, v2, v3...) to build a creative library over time without data loss.
+- **Organized Asset Storage**: Maintains separate directories for different asset types:
+  - `/assets/input/uploads/` - Product hero images
+  - `/assets/input/logos/` - Brand logos (exclusive source for logo overlays)
+  - `/outputs/` - Generated campaign creatives with version numbers
 - **Fallback Mechanism**: Prioritizes Google Gemini, then OpenAI DALL-E 3, and finally placeholder images for robust image generation.
 - **Extensible Format**: Supports both JSON and YAML for campaign briefs.
 - **Smart Text Overlay**: Dynamically sizes and wraps text based on image dimensions for optimal readability.
 - **Multi-Script Font Support**: Automatic detection of text script (Thai, Arabic/Persian/Urdu, Hebrew, Bengali, Greek, Devanagari/Hindi, Ethiopic/Ge'ez, Korean/Hangul, Traditional Chinese, Japanese/Hiragana/Katakana, Simplified Chinese/Hanzi, Cyrillic, Latin) with intelligent font selection (Noto Sans Thai 213KB, Noto Sans Arabic 824KB, Noto Sans Hebrew 110KB, Noto Sans Bengali 446KB, Noto Sans Greek 2MB, Noto Sans Devanagari 631KB, Noto Sans Ethiopic 1.1MB, Noto Sans KR 10MB, Noto Sans TC 11.3MB, Noto Sans JP 9.2MB for respective scripts).
-- **Brand Logo Features**: Allows users to select and position brand logos from Azure, applying intelligent sizing and padding. Automatically converts white backgrounds to transparent for seamless blending with images.
+- **Brand Logo Features**: Allows users to select and position brand logos from Azure, applying intelligent sizing and padding. Automatically converts white backgrounds to transparent for seamless blending with images. Logos are sourced exclusively from the dedicated `/logos/` directory.
 - **Browser Cache Busting**: Implements timestamp-based cache busting to ensure fresh image loading after regeneration.
 
 ## External Dependencies

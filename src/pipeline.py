@@ -147,20 +147,23 @@ class CreativeAutomationPipeline:
         return output_paths
     
     def _get_brand_logo(self) -> Optional[Image.Image]:
-        """Get brand logo from uploads directory if available"""
-        uploads_dir = self.assets_dir / 'uploads'
+        """Get brand logo from dedicated logos directory"""
+        logos_dir = self.assets_dir / 'logos'
+        logos_dir.mkdir(parents=True, exist_ok=True)
         
-        # Look for brand_logo file
-        for pattern in ['brand_logo.*', '*logo*']:
-            matches = list(uploads_dir.glob(pattern))
+        # Look for any image file in logos directory
+        for ext in ['*.png', '*.jpg', '*.jpeg', '*.webp']:
+            matches = list(logos_dir.glob(ext))
             if matches:
-                logo_path = matches[0]
+                # Use the first logo found (or most recently modified)
+                logo_path = sorted(matches, key=lambda p: p.stat().st_mtime, reverse=True)[0]
                 logger.info(f"Found brand logo: {logo_path}")
                 try:
                     return Image.open(logo_path)
                 except Exception as e:
                     logger.error(f"Failed to load brand logo: {e}")
         
+        logger.info("No brand logo found in logos directory")
         return None
     
     def _get_or_generate_hero_image(self, product: dict, campaign_brief: CampaignBrief) -> Optional[Image.Image]:

@@ -170,6 +170,7 @@ def download_azure_image():
         data = request.get_json()
         blob_name = data.get('blob_name')
         product_name = data.get('product_name', '')
+        is_logo = data.get('is_logo', False)
         
         if not blob_name:
             return jsonify({'error': 'No blob name provided'}), 400
@@ -179,18 +180,25 @@ def download_azure_image():
         if not uploader.enabled:
             return jsonify({'error': 'Azure Blob Storage not configured'}), 400
         
-        # Determine filename
-        uploads_dir = ASSETS_DIR / 'uploads'
-        uploads_dir.mkdir(parents=True, exist_ok=True)
-        
-        if product_name:
-            normalized_name = product_name.lower().replace(' ', '_').replace('-', '_')
-            ext = Path(blob_name).suffix
-            filename = f"{normalized_name}_hero{ext}"
-        else:
+        # Determine directory and filename based on type
+        if is_logo:
+            # Save to dedicated logos directory
+            target_dir = ASSETS_DIR / 'logos'
+            target_dir.mkdir(parents=True, exist_ok=True)
             filename = Path(blob_name).name
+        else:
+            # Save to uploads directory for hero images
+            target_dir = ASSETS_DIR / 'uploads'
+            target_dir.mkdir(parents=True, exist_ok=True)
+            
+            if product_name:
+                normalized_name = product_name.lower().replace(' ', '_').replace('-', '_')
+                ext = Path(blob_name).suffix
+                filename = f"{normalized_name}_hero{ext}"
+            else:
+                filename = Path(blob_name).name
         
-        filepath = uploads_dir / filename
+        filepath = target_dir / filename
         
         # Download via Azure SDK (secure - validates blob exists in our container)
         success = uploader.download_blob(blob_name, filepath)
