@@ -296,7 +296,7 @@
             addLog('INFO', 'Product removed');
         }
 
-        async function removeHeroImage(button) {
+        function removeHeroImage(button) {
             const uploadDiv = button.closest('.hero-image-upload');
             const heroPreview = uploadDiv.querySelector('.hero-image-preview');
             const heroPreviewImage = uploadDiv.querySelector('.hero-preview-image');
@@ -304,32 +304,37 @@
             const productItem = button.closest('.product-item');
             const productName = productItem.querySelector('.product-name').value.trim();
             
+            addLog('INFO', `Attempting to delete hero image for product: ${productName}`);
+            
             // Delete the hero image file from server
             if (productName) {
-                try {
-                    const response = await fetch('/delete-hero-image', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ product_name: productName })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        addLog('SUCCESS', data.message);
-                    } else {
-                        addLog('WARNING', 'Failed to delete hero image file from server');
+                fetch('/delete-hero-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_name: productName })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Server returned ' + response.status);
                     }
-                } catch (error) {
+                    return response.json();
+                })
+                .then(data => {
+                    addLog('SUCCESS', data.message);
+                })
+                .catch(error => {
                     addLog('ERROR', `Error deleting hero image: ${error.message}`);
-                }
+                });
+            } else {
+                addLog('WARNING', 'No product name found, cannot delete hero image from server');
             }
             
-            // Clear the preview UI
+            // Clear the preview UI immediately (don't wait for server response)
             heroPreview.style.display = 'none';
             heroPreviewImage.src = '';
             blobInput.value = '';
             
-            addLog('INFO', 'Hero image removed from preview');
+            addLog('INFO', 'Hero image preview cleared from UI');
         }
 
         let currentAzureButton = null;
