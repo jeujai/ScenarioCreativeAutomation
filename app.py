@@ -144,6 +144,7 @@ def azure_images():
     """List available images from Azure Blob Storage"""
     try:
         folder = request.args.get('folder', '')
+        product_name = request.args.get('product', '')
         
         uploader = AzureUploader()
         
@@ -154,15 +155,22 @@ def azure_images():
         
         images = uploader.list_blobs(prefix=folder, only_images=True)
         
-        # If folder is 'assets', exclude items in 'assets/logos/' subfolder
+        # If folder is 'assets', filter based on product
         if folder == 'assets':
+            # Always exclude logos subfolder
             images = [img for img in images if not img['name'].startswith('assets/logos/')]
+            
+            # If product name provided, filter to only that product's assets
+            if product_name:
+                normalized_product = product_name.lower().replace(' ', '_').replace('-', '_')
+                images = [img for img in images if f'/{normalized_product}/' in img['name'] or f'/{normalized_product}_' in img['name']]
         
         return jsonify({
             'success': True,
             'images': images,
             'count': len(images),
-            'folder': folder
+            'folder': folder,
+            'product': product_name
         })
     
     except Exception as e:

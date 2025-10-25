@@ -417,8 +417,20 @@
             
             const folder = azureModalType === 'logo' ? 'assets/logos' : 'assets';
             
+            let productName = '';
+            if (azureModalType === 'hero' && currentAzureButton) {
+                const productItem = currentAzureButton.closest('.product-item');
+                const productNameInput = productItem ? productItem.querySelector('.product-name') : null;
+                productName = productNameInput ? productNameInput.value.trim() : '';
+            }
+            
             try {
-                const response = await fetch(`/azure-images?folder=${encodeURIComponent(folder)}`);
+                let url = `/azure-images?folder=${encodeURIComponent(folder)}`;
+                if (productName) {
+                    url += `&product=${encodeURIComponent(productName)}`;
+                }
+                
+                const response = await fetch(url);
                 const data = await response.json();
                 
                 if (!response.ok) {

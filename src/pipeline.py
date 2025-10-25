@@ -92,14 +92,22 @@ class CreativeAutomationPipeline:
         return results, azure_upload_count
     
     def _get_next_version_number(self, product_dir: Path, base_filename: str) -> int:
-        """Find the next available version number for a product asset"""
-        version = 1
-        while True:
-            versioned_filename = f"{base_filename}_v{version}.png"
-            versioned_path = product_dir / versioned_filename
-            if not versioned_path.exists():
-                return version
-            version += 1
+        """Find the next available version number by scanning existing files"""
+        import re
+        
+        if not product_dir.exists():
+            return 1
+        
+        max_version = 0
+        pattern = re.compile(rf"{re.escape(base_filename)}_v(\d+)\.png")
+        
+        for file in product_dir.glob(f"{base_filename}_v*.png"):
+            match = pattern.match(file.name)
+            if match:
+                version = int(match.group(1))
+                max_version = max(max_version, version)
+        
+        return max_version + 1
     
     def _process_product(self, product: dict, campaign_brief: CampaignBrief) -> List[Path]:
         product_name = product.get('name', 'Unknown Product')
