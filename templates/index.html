@@ -296,18 +296,40 @@
             addLog('INFO', 'Product removed');
         }
 
-        function removeHeroImage(button) {
+        async function removeHeroImage(button) {
             const uploadDiv = button.closest('.hero-image-upload');
             const heroPreview = uploadDiv.querySelector('.hero-image-preview');
             const heroPreviewImage = uploadDiv.querySelector('.hero-preview-image');
             const blobInput = uploadDiv.querySelector('.azure-image-url');
+            const productItem = button.closest('.product-item');
+            const productName = productItem.querySelector('.product-name').value.trim();
             
-            // Clear the preview
+            // Delete the hero image file from server
+            if (productName) {
+                try {
+                    const response = await fetch('/delete-hero-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ product_name: productName })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        addLog('SUCCESS', data.message);
+                    } else {
+                        addLog('WARNING', 'Failed to delete hero image file from server');
+                    }
+                } catch (error) {
+                    addLog('ERROR', `Error deleting hero image: ${error.message}`);
+                }
+            }
+            
+            // Clear the preview UI
             heroPreview.style.display = 'none';
             heroPreviewImage.src = '';
             blobInput.value = '';
             
-            addLog('INFO', 'Hero image removed');
+            addLog('INFO', 'Hero image removed from preview');
         }
 
         let currentAzureButton = null;

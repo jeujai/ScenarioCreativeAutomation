@@ -212,6 +212,47 @@ def download_azure_image():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/delete-hero-image', methods=['POST'])
+def delete_hero_image():
+    """Delete a hero image from uploads directory"""
+    try:
+        data = request.get_json()
+        product_name = data.get('product_name', '')
+        
+        if not product_name:
+            return jsonify({'error': 'No product name provided'}), 400
+        
+        uploads_dir = ASSETS_DIR / 'uploads'
+        normalized_name = product_name.lower().replace(' ', '_').replace('-', '_')
+        
+        # Look for hero image with various extensions
+        deleted = False
+        for ext in ['jpeg', 'jpg', 'png', 'webp']:
+            filename = f"{normalized_name}_hero.{ext}"
+            filepath = uploads_dir / filename
+            
+            if filepath.exists():
+                filepath.unlink()
+                logger.info(f"Deleted hero image: {filepath}")
+                deleted = True
+                break
+        
+        if deleted:
+            return jsonify({
+                'success': True,
+                'message': 'Hero image deleted successfully'
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'message': 'No hero image found to delete'
+            })
+    
+    except Exception as e:
+        logger.error(f"Error deleting hero image: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/health')
 def health():
     return jsonify({'status': 'healthy', 'service': 'Creative Automation Pipeline'})
