@@ -415,7 +415,7 @@
             modal.style.display = 'flex';
             gallery.innerHTML = '<div class="azure-loading">Loading images from Azure...</div>';
             
-            const folder = azureModalType === 'logo' ? 'assets/input/logos' : 'assets/output';
+            const folder = azureModalType === 'logo' ? 'assets/logos' : 'assets';
             
             try {
                 const response = await fetch(`/azure-images?folder=${encodeURIComponent(folder)}`);

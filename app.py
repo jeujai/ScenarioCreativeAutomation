@@ -154,6 +154,10 @@ def azure_images():
         
         images = uploader.list_blobs(prefix=folder, only_images=True)
         
+        # If folder is 'assets', exclude items in 'assets/logos/' subfolder
+        if folder == 'assets':
+            images = [img for img in images if not img['name'].startswith('assets/logos/')]
+        
         return jsonify({
             'success': True,
             'images': images,
