@@ -712,12 +712,16 @@
             const selectedPosition = document.querySelector('input[name="logoPosition"]:checked');
             const logoPosition = selectedPosition ? selectedPosition.value : 'top-left';
             
+            // Check if logo was selected for this campaign
+            const hasLogoSelected = azureLogoBlob && azureLogoBlob.value ? true : false;
+            
             const campaignData = {
                 region: document.getElementById('region').value.trim() || 'Global',
                 audience: document.getElementById('audience').value.trim() || 'General',
                 message: document.getElementById('message').value.trim(),
                 brand_color: document.getElementById('brandColor').value.trim(),
                 logo_position: logoPosition,
+                logo_selected: hasLogoSelected,
                 products: products
             };
 

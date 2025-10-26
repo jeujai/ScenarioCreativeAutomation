@@ -157,8 +157,17 @@ class CreativeAutomationPipeline:
             logger.error(f"Failed to obtain hero image for {product_name}")
             return []
         
-        # Get brand logo if available
-        brand_logo = self._get_brand_logo()
+        # Get brand logo only if explicitly selected for this campaign
+        brand_logo = None
+        if campaign_brief.logo_selected:
+            brand_logo = self._get_brand_logo()
+            if brand_logo:
+                logger.info("Brand logo will be applied to all outputs")
+            else:
+                logger.warning("Logo was selected but could not be loaded from logos directory")
+        else:
+            logger.info("No logo selected for this campaign - skipping logo overlay")
+        
         logo_position = campaign_brief.logo_position
         
         output_paths = []
@@ -181,7 +190,7 @@ class CreativeAutomationPipeline:
                 text_color=campaign_brief.brand_color
             )
             
-            # Add brand logo overlay if available
+            # Add brand logo overlay if selected and available
             if brand_logo:
                 final_image = self.image_processor.add_logo_overlay(
                     final_image, 

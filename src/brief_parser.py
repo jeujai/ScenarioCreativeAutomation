@@ -25,6 +25,12 @@ class CampaignBrief:
         # Handle both camelCase (from frontend) and snake_case formats
         return self.raw_data.get('brandColor') or self.raw_data.get('brand_color', '#FFFFFF')
     
+    @property
+    def logo_selected(self) -> bool:
+        """Check if a logo was explicitly selected for this campaign"""
+        # Handle both camelCase (from frontend) and snake_case formats
+        return self.raw_data.get('logoSelected') or self.raw_data.get('logo_selected', False)
+    
     def validate(self) -> bool:
         if not self.products:
             raise ValueError("Campaign brief must include at least one product")
