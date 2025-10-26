@@ -5,19 +5,47 @@ import yaml
 from pathlib import Path
 from werkzeug.utils import secure_filename
 import logging
+import sys
 
 from src.brief_parser import BriefParser, CampaignBrief
 from src.pipeline import CreativeAutomationPipeline
 from src.config import ASSETS_DIR, OUTPUTS_DIR
 from src.azure_uploader import AzureUploader
 
+# Configure logging early
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
+
+# Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SESSION_SECRET', 'dev-secret-key-change-in-production')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = ASSETS_DIR
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Ensure required directories exist on startup
+try:
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+    (ASSETS_DIR / 'uploads').mkdir(parents=True, exist_ok=True)
+    (ASSETS_DIR / 'logos').mkdir(parents=True, exist_ok=True)
+    logger.info(f"Initialized directories: {ASSETS_DIR}, {OUTPUTS_DIR}")
+except Exception as e:
+    logger.error(f"Failed to create directories: {e}")
+    # Continue anyway - directories might already exist
+
+# Log configuration on startup
+logger.info("=" * 60)
+logger.info("Creative Automation Pipeline - Starting")
+logger.info(f"Python version: {sys.version}")
+logger.info(f"Assets directory: {ASSETS_DIR}")
+logger.info(f"Outputs directory: {OUTPUTS_DIR}")
+logger.info(f"Gemini API Key configured: {bool(os.getenv('GEMINI_API_KEY'))}")
+logger.info(f"Azure configured: {bool(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))}")
+logger.info("=" * 60)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
@@ -285,11 +313,24 @@ def delete_hero_image():
 
 @app.route('/health')
 def health():
-    return jsonify({'status': 'healthy', 'service': 'Creative Automation Pipeline'})
+    """Health check endpoint for deployment monitoring"""
+    health_status = {
+        'status': 'healthy',
+        'service': 'Creative Automation Pipeline',
+        'version': '1.0.0',
+        'checks': {
+            'gemini_api_key': bool(os.getenv('GEMINI_API_KEY')),
+            'azure_storage': bool(os.getenv('AZURE_STORAGE_CONNECTION_STRING')),
+            'directories': {
+                'assets': ASSETS_DIR.exists(),
+                'outputs': OUTPUTS_DIR.exists()
+            }
+        }
+    }
+    return jsonify(health_status), 200
 
 
 if __name__ == '__main__':
-    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
-    
+    # Directories already created at module load
+    logger.info("Starting Flask development server on port 5000...")
     app.run(host='0.0.0.0', port=5000, debug=True)
