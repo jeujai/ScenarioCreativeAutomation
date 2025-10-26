@@ -236,6 +236,11 @@
                     
                     <!-- Logo Preview -->
                     <div id="logoPreview" class="logo-preview" style="display: none;">
+                        <button type="button" class="btn-remove-logo" onclick="removeLogoImage()" title="Remove Logo">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                         <img id="logoPreviewImage" src="" alt="Brand Logo Preview">
                     </div>
                     
@@ -445,6 +450,19 @@
             blobInput.value = '';
             
             addLog('INFO', 'Hero image preview cleared from UI');
+        }
+
+        function removeLogoImage() {
+            const logoPreview = document.getElementById('logoPreview');
+            const logoPreviewImage = document.getElementById('logoPreviewImage');
+            const azureLogoBlob = document.getElementById('azureLogoBlob');
+            
+            // Clear the preview UI
+            logoPreview.style.display = 'none';
+            logoPreviewImage.src = '';
+            azureLogoBlob.value = '';
+            
+            addLog('INFO', 'Brand logo removed from campaign');
         }
 
         let currentAzureButton = null;

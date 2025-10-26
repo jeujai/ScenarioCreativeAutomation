@@ -33,7 +33,7 @@ body {
         "header header"
         "sidebar main"
         "logs logs";
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 400px 1fr;
     grid-template-rows: auto 1fr auto;
     height: 100vh;
 }
@@ -636,6 +636,7 @@ textarea {
 
 /* Logo Preview */
 .logo-preview {
+    position: relative;
     margin-top: 16px;
     padding: 16px;
     background: var(--bg-tertiary);
@@ -693,6 +694,34 @@ textarea {
 }
 
 .btn-remove-hero svg {
+    color: white;
+    stroke: white;
+}
+
+.btn-remove-logo {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: rgba(239, 68, 68, 0.9);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.btn-remove-logo:hover {
+    background: rgb(239, 68, 68);
+    transform: scale(1.1);
+}
+
+.btn-remove-logo svg {
     color: white;
     stroke: white;
 }
