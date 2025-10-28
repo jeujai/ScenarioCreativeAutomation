@@ -105,40 +105,6 @@ class AzureUploader:
             logger.error(f"Error uploading file to Azure: {e}")
             return None
     
-    def upload_directory(self, directory: Path, prefix: str = "") -> List[str]:
-        if not self.enabled:
-            logger.debug(f"Azure upload skipped (not enabled): {directory}")
-            return []
-        
-        uploaded_urls = []
-        
-        for file_path in directory.rglob("*.png"):
-            relative_path = file_path.relative_to(directory)
-            blob_name = f"{prefix}/{relative_path}" if prefix else str(relative_path)
-            
-            url = self.upload_file(file_path, blob_name)
-            if url:
-                uploaded_urls.append(url)
-        
-        logger.info(f"Uploaded {len(uploaded_urls)} files from {directory} to Azure")
-        return uploaded_urls
-    
-    def delete_blob(self, blob_name: str) -> bool:
-        if not self.enabled or not self.blob_service_client:
-            return False
-        
-        try:
-            blob_client = self.blob_service_client.get_blob_client(
-                container=self.container_name,
-                blob=blob_name
-            )
-            blob_client.delete_blob()
-            logger.info(f"Deleted from Azure: {blob_name}")
-            return True
-        except Exception as e:
-            logger.error(f"Error deleting blob from Azure: {e}")
-            return False
-    
     def list_blobs(self, prefix: str = "", only_images: bool = True) -> List[dict]:
         """List blobs in the container, optionally filtering by prefix and image types"""
         if not self.enabled or not self.blob_service_client:

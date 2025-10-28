@@ -1,5 +1,4 @@
 import logging
-import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -25,33 +24,6 @@ class CreativeAutomationPipeline:
         self.outputs_dir = Path(outputs_dir)
         self.assets_dir = Path(assets_dir)
         self.outputs_dir.mkdir(parents=True, exist_ok=True)
-    
-    def _purge_all_assets(self):
-        """Clear outputs and AI-generated assets (preserve user uploads)"""
-        logger.info("Purging previous outputs and AI-generated assets...")
-        
-        # Always purge outputs directory for fresh creatives
-        if self.outputs_dir.exists():
-            for item in self.outputs_dir.iterdir():
-                if item.is_dir():
-                    shutil.rmtree(item)
-                elif item.is_file():
-                    item.unlink()
-        
-        # Purge AI-generated assets (in generated/ subdirectory)
-        generated_dir = self.assets_dir / 'generated'
-        if generated_dir.exists():
-            for item in generated_dir.iterdir():
-                if item.is_dir():
-                    shutil.rmtree(item)
-                    logger.debug(f"Purged generated directory: {item}")
-                elif item.is_file():
-                    item.unlink()
-                    logger.debug(f"Purged generated asset: {item}")
-        
-        # NOTE: User uploads in uploads/ subdirectory are preserved
-        
-        logger.info("Purge complete. User uploads preserved, ready for fresh generation...")
     
     def run(self, campaign_brief: CampaignBrief) -> tuple[Dict[str, List[Path]], int]:
         # Versioning enabled - no purge, incremental versions instead
