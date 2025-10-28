@@ -21,7 +21,7 @@ class CreativeAutomationPipeline:
         self.asset_manager = AssetManager(assets_dir)
         self.image_generator = ImageGenerator()
         self.image_processor = ImageProcessor()
-        self.azure_uploader = AzureUploader(container_name=AZURE_CONTAINER_NAME) if AZURE_UPLOAD_ENABLED else None
+        self.azure_uploader = AzureUploader(sas_url=None, container_name=AZURE_CONTAINER_NAME) if AZURE_UPLOAD_ENABLED else None
         self.outputs_dir = Path(outputs_dir)
         self.assets_dir = Path(assets_dir)
         self.outputs_dir.mkdir(parents=True, exist_ok=True)

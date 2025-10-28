@@ -44,10 +44,18 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 
 ## External Dependencies
 - **GenAI**: Google Gemini (primary), OpenAI DALL-E 3 (fallback)
-- **Cloud Storage**: Azure Blob Storage
+- **Cloud Storage**: Azure Blob Storage (SAS URL authentication for secure, time-limited access)
 - **Web Framework**: Flask
 - **Image Processing**: Pillow (PIL)
 - **Data Serialization**: PyYAML
 - **HTTP Requests**: Requests library
 - **Environment Variables**: Python-dotenv
 - **Web Server Gateway Interface**: Werkzeug
+
+## Environment Variables
+- **GEMINI_API_KEY**: Google Gemini API key for primary image generation
+- **OPENAI_API_KEY**: OpenAI API key for fallback image generation  
+- **AZURE_STORAGE_SAS_URL**: Azure Blob Storage SAS URL (format: `https://account.blob.core.windows.net/container?sp=...&sig=...`)
+- **AZURE_CONTAINER_NAME**: Override container name from SAS URL (default: `campaign-assets`)
+- **AZURE_UPLOAD_ENABLED**: Enable/disable Azure uploads (default: `true`)
+- **SESSION_SECRET**: Flask session secret for web application security

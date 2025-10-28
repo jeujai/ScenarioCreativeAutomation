@@ -9,20 +9,22 @@ logger = logging.getLogger(__name__)
 
 
 class AzureUploader:
-    def __init__(self, connection_string: Optional[str] = None, container_name: str = "campaign-assets"):
-        self.connection_string = connection_string or os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    def __init__(self, sas_url: Optional[str] = None, container_name: str = "campaign-assets"):
+        """
+        Initialize Azure Blob Storage uploader with SAS URL.
+        
+        Args:
+            sas_url: Azure Blob Storage SAS URL (e.g., https://account.blob.core.windows.net/container?sp=racwdli...)
+            container_name: Default container name (overridden if SAS URL contains container in path)
+        """
+        self.sas_url = sas_url or os.getenv("AZURE_STORAGE_SAS_URL")
         self.container_name = container_name
         self.enabled = False
         self.blob_service_client: Optional[BlobServiceClient] = None
         
-        if self.connection_string:
+        if self.sas_url:
             try:
-                # Check if it's a SAS URL (starts with https://) or a connection string
-                if self.connection_string.startswith("https://"):
-                    self._init_from_sas_url(self.connection_string)
-                else:
-                    self._init_from_connection_string(self.connection_string)
-                
+                self._init_from_sas_url(self.sas_url)
                 self._ensure_container_exists()
                 self.enabled = True
                 logger.info(f"Azure Blob Storage initialized - container: {self.container_name}")
@@ -30,14 +32,10 @@ class AzureUploader:
                 logger.warning(f"Failed to initialize Azure Blob Storage: {e}")
                 self.enabled = False
         else:
-            logger.info("Azure Blob Storage not configured (AZURE_STORAGE_CONNECTION_STRING not set)")
-    
-    def _init_from_connection_string(self, connection_string: str):
-        """Initialize from traditional connection string"""
-        self.blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+            logger.info("Azure Blob Storage not configured (AZURE_STORAGE_SAS_URL not set)")
     
     def _init_from_sas_url(self, sas_url: str):
-        """Initialize from SAS URL (more secure, scoped permissions)"""
+        """Initialize from SAS URL with scoped, time-limited permissions"""
         # Parse the SAS URL: https://account.blob.core.windows.net/container?sas_token
         parsed = urlparse(sas_url)
         

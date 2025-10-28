@@ -44,7 +44,7 @@ logger.info(f"Python version: {sys.version}")
 logger.info(f"Assets directory: {ASSETS_DIR}")
 logger.info(f"Outputs directory: {OUTPUTS_DIR}")
 logger.info(f"Gemini API Key configured: {bool(os.getenv('GEMINI_API_KEY'))}")
-logger.info(f"Azure configured: {bool(os.getenv('AZURE_STORAGE_CONNECTION_STRING'))}")
+logger.info(f"Azure configured: {bool(os.getenv('AZURE_STORAGE_SAS_URL'))}")
 logger.info("=" * 60)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
@@ -185,7 +185,7 @@ def azure_images():
         
         if not uploader.enabled:
             return jsonify({
-                'error': 'Azure Blob Storage not configured. Please set AZURE_STORAGE_CONNECTION_STRING environment variable.'
+                'error': 'Azure Blob Storage not configured. Please set AZURE_STORAGE_SAS_URL environment variable.'
             }), 400
         
         images = uploader.list_blobs(prefix=folder, only_images=True)
@@ -320,7 +320,7 @@ def health():
         'version': '1.0.0',
         'checks': {
             'gemini_api_key': bool(os.getenv('GEMINI_API_KEY')),
-            'azure_storage': bool(os.getenv('AZURE_STORAGE_CONNECTION_STRING')),
+            'azure_storage': bool(os.getenv('AZURE_STORAGE_SAS_URL')),
             'directories': {
                 'assets': ASSETS_DIR.exists(),
                 'outputs': OUTPUTS_DIR.exists()

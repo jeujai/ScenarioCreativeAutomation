@@ -14,7 +14,8 @@ ASPECT_RATIOS = {
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
-AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING", "")
+# Azure Blob Storage (SAS URL for secure, scoped access)
+AZURE_STORAGE_SAS_URL = os.getenv("AZURE_STORAGE_SAS_URL", "")
 AZURE_CONTAINER_NAME = os.getenv("AZURE_CONTAINER_NAME", "campaign-assets")
 AZURE_UPLOAD_ENABLED = os.getenv("AZURE_UPLOAD_ENABLED", "true").lower() == "true"
 
