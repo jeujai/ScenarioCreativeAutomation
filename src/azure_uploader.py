@@ -13,7 +13,7 @@ class AzureUploader:
         self.connection_string = connection_string or os.getenv("AZURE_STORAGE_CONNECTION_STRING")
         self.container_name = container_name
         self.enabled = False
-        self.blob_service_client = None
+        self.blob_service_client: Optional[BlobServiceClient] = None
         
         if self.connection_string:
             try:
@@ -61,6 +61,8 @@ class AzureUploader:
         logger.info(f"Initialized with SAS URL - Account: {parsed.netloc}, Container: {self.container_name}")
     
     def _ensure_container_exists(self):
+        if not self.blob_service_client:
+            return
         try:
             container_client = self.blob_service_client.get_container_client(self.container_name)
             if not container_client.exists():
@@ -70,7 +72,7 @@ class AzureUploader:
             logger.debug(f"Container check skipped (limited SAS permissions): {e}")
     
     def upload_file(self, local_path: Path, blob_name: Optional[str] = None) -> Optional[str]:
-        if not self.enabled:
+        if not self.enabled or not self.blob_service_client:
             logger.debug(f"Azure upload skipped (not enabled): {local_path.name}")
             return None
         
@@ -124,7 +126,7 @@ class AzureUploader:
         return uploaded_urls
     
     def delete_blob(self, blob_name: str) -> bool:
-        if not self.enabled:
+        if not self.enabled or not self.blob_service_client:
             return False
         
         try:
@@ -141,7 +143,7 @@ class AzureUploader:
     
     def list_blobs(self, prefix: str = "", only_images: bool = True) -> List[dict]:
         """List blobs in the container, optionally filtering by prefix and image types"""
-        if not self.enabled:
+        if not self.enabled or not self.blob_service_client:
             logger.debug("Azure listing skipped (not enabled)")
             return []
         
@@ -179,7 +181,7 @@ class AzureUploader:
     
     def download_blob(self, blob_name: str, local_path: Path) -> bool:
         """Download a blob from Azure to local filesystem (secure - validates blob exists)"""
-        if not self.enabled:
+        if not self.enabled or not self.blob_service_client:
             logger.debug("Azure download skipped (not enabled)")
             return False
         

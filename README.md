@@ -118,11 +118,20 @@ creative-automation-pipeline/
    # Required for full functionality
    GEMINI_API_KEY=your_gemini_api_key
    OPENAI_API_KEY=your_openai_api_key
-   AZURE_STORAGE_ACCOUNT_URL=https://your-account.blob.core.windows.net/
-   AZURE_SAS_TOKEN=?sv=...
+   
+   # Azure Blob Storage (supports connection string OR SAS URL)
+   # Option 1: Traditional connection string
+   AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...
+   
+   # Option 2: SAS URL (more secure, scoped permissions)
+   AZURE_STORAGE_CONNECTION_STRING=https://account.blob.core.windows.net/container?sv=...
+   
+   # Optional Azure settings
+   AZURE_CONTAINER_NAME=campaign-assets           # Default: "campaign-assets"
+   AZURE_UPLOAD_ENABLED=true                      # Default: "true"
    
    # Optional
-   SESSION_SECRET=your_session_secret
+   SESSION_SECRET=your_session_secret             # For Flask sessions
    ```
 
 3. **Run the application**:
