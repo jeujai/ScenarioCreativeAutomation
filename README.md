@@ -1,119 +1,306 @@
 # Creative Automation Pipeline
 
-A proof-of-concept creative automation pipeline that generates social ad campaign assets using GenAI. This system automates the creation of localized campaign creatives for multiple products, aspect ratios, and markets.
+A GenAI-powered creative automation pipeline that generates localized social ad campaign assets at scale. This system automates the creation of campaign creatives across multiple products, aspect ratios, and global markets with intelligent asset management and real-time preview.
 
 **Available as both a Web Application and Command-Line Tool!**
 
 ## Features
 
-- **🌐 Web Interface**: Modern, intuitive web UI for easy campaign creation and asset preview
-- **💻 CLI Tool**: Command-line interface for automation and batch processing
-- **Campaign Brief Management**: Accept campaign briefs in JSON or YAML format
-- **Multi-Product Support**: Generate creatives for multiple products in a single campaign
-- **Intelligent Asset Management**: Reuse existing assets when available, generate new ones when needed
-- **GenAI Image Generation**: Integrate with OpenAI DALL-E for automated image creation
-- **Multi-Aspect Ratio Support**: Generate creatives for 1:1, 9:16, and 16:9 aspect ratios
-- **Text Overlay System**: Automatically add campaign messages to creatives with proper formatting
-- **Organized Output**: Systematically organize outputs by product and aspect ratio
-- **Localization Ready**: Support for localized campaign messages (with extensibility for full localization)
+### 🎨 Web Interface
+- **Modern Dark UI**: Professional creative tool design with real-time preview and process logs
+- **Dynamic Form Loading**: Defaults automatically loaded from YAML configuration (single source of truth)
+- **Azure Integration**: Browse and select assets directly from Azure Blob Storage with SAS URL support
+- **Visual Controls**: Color picker for brand colors, logo positioning controls, hero image management
+- **Real-time Preview**: Live gallery view with organized product sections and cache-busting
+- **400px Sidebar**: Optimized for comfortable product name and description editing (7-row textareas)
+
+### 🤖 GenAI Image Generation
+- **Primary**: Google Gemini 2.5 Flash Image for high-quality creative generation
+- **Fallback**: OpenAI DALL-E 3 for redundancy
+- **Smart Hero Logic**: 
+  - Reuses uploaded hero images across all outputs
+  - Generates region-specific backgrounds when no hero provided
+- **Parallel Processing**: Simultaneous generation of all products (up to 4x speed improvement)
+
+### 🌍 Global Localization
+- **52 Regions Supported**: Automatic translation of campaign messages
+- **Autocomplete Region Picker**: Easy selection from all supported markets
+- **Multi-Script Font Support**: Automatic font selection for Thai, Arabic, Hebrew, Bengali, Greek, Devanagari, Ethiopic, Korean, Traditional/Simplified Chinese, Japanese, Cyrillic, and Latin scripts
+- **Cultural Adaptation**: Region-specific image generation with culturally appropriate backgrounds
+
+### 📦 Asset Management
+- **Azure Blob Storage**: Cloud-based asset storage with intelligent filtering
+- **Smart Versioning**: Azure-based incremental versioning (v1, v2, v3...) with session persistence
+- **Organized Folders**: Separate directories for uploads, generated assets, and logos
+- **Hero Image Workflow**: Upload hero images or let GenAI create region-specific visuals
+- **Logo Management**: Select, position, and deselect brand logos with transparency support
+
+### 🎯 Multi-Format Output
+- **Three Aspect Ratios**: 1:1 (Instagram), 9:16 (Stories/Reels), 16:9 (YouTube)
+- **Smart Text Overlay**: Campaign messages with brand colors and automatic text wrapping
+- **Version Control**: Incremental versioning persists in Azure across sessions
+- **Organized Gallery**: Product sections with sorted aspect ratios for easy viewing
+
+## Quick Start
+
+### Web Interface (Recommended)
+
+1. **Start the server**:
+   ```bash
+   python app.py
+   ```
+
+2. **Open browser** to `http://localhost:5000`
+
+3. **The form pre-populates** with default Superman/Batman campaign from `examples/multi_product_campaign.yaml`
+
+4. **Generate creatives**:
+   - Modify campaign message, region, and products as needed
+   - Optionally select hero images and logo from Azure
+   - Click "Generate Creatives"
+   - Preview and download results!
+
+### Command-Line Interface
+
+Run the pipeline with a campaign brief:
+
+```bash
+python main.py examples/multi_product_campaign.yaml
+```
 
 ## Project Structure
 
 ```
 creative-automation-pipeline/
-├── app.py                      # Flask web application
-├── main.py                     # CLI entry point
+├── app.py                          # Flask web application
+├── main.py                         # CLI entry point
 ├── src/
-│   ├── __init__.py
-│   ├── config.py               # Configuration and constants
-│   ├── brief_parser.py         # Campaign brief parsing (JSON/YAML)
-│   ├── asset_manager.py        # Asset discovery and management
-│   ├── image_generator.py      # GenAI image generation (OpenAI DALL-E)
-│   ├── image_processor.py      # Image resizing and text overlay
-│   └── pipeline.py             # Main pipeline orchestrator
+│   ├── config.py                   # Configuration and constants
+│   ├── brief_parser.py             # Campaign brief parsing (JSON/YAML)
+│   ├── asset_manager.py            # Asset discovery and management
+│   ├── image_generator.py          # GenAI image generation (Gemini/DALL-E)
+│   ├── image_processor.py          # Image resizing and text overlay
+│   ├── azure_uploader.py           # Azure Blob Storage integration
+│   ├── regional_translator.py      # 52-region translation system
+│   └── pipeline.py                 # Main pipeline orchestrator
 ├── templates/
-│   └── index.html              # Web interface template
-├── static/
-│   └── css/
-│       └── style.css           # Web interface styling
+│   └── index.html                  # Web interface (loads YAML defaults)
 ├── examples/
-│   ├── campaign_brief.yaml     # Example YAML campaign brief
-│   ├── campaign_brief.json     # Example JSON campaign brief
-│   └── multi_product_campaign.yaml
+│   ├── multi_product_campaign.yaml # Default campaign (single source of truth)
+│   ├── campaign_brief.yaml         # Simple example
+│   └── campaign_brief.json         # JSON format example
 ├── assets/
-│   └── input/                  # Input assets directory
-├── outputs/                    # Generated creatives output
-└── README.md
+│   └── input/
+│       ├── uploads/                # User-uploaded hero images
+│       ├── generated/              # AI-generated region-specific assets
+│       └── logos/                  # Brand logos (exclusive source)
+├── outputs/                        # Generated creatives (cleared per session)
+└── fonts/                          # Multi-script font collection
 ```
-
-## Requirements
-
-- Python 3.11+
-- Dependencies (see pyproject.toml):
-  - Flask (web framework)
-  - Pillow (image processing)
-  - PyYAML (YAML parsing)
-  - requests (HTTP requests)
-  - openai (OpenAI API integration)
-  - python-dotenv (environment management)
 
 ## Installation
 
-1. **Clone or download this project**
+### Requirements
+- Python 3.11+
+- Azure Blob Storage account (for cloud features)
+- Google Gemini API key (primary GenAI)
+- OpenAI API key (fallback GenAI)
 
-2. **Install dependencies**:
+### Setup
+
+1. **Install dependencies**:
    ```bash
-   pip install flask pillow pyyaml requests openai python-dotenv
+   pip install flask pillow pyyaml requests openai google-genai azure-storage-blob python-dotenv werkzeug gunicorn
    ```
+
+2. **Configure environment variables**:
+   ```bash
+   # Required for full functionality
+   GEMINI_API_KEY=your_gemini_api_key
+   OPENAI_API_KEY=your_openai_api_key
+   AZURE_STORAGE_ACCOUNT_URL=https://your-account.blob.core.windows.net/
+   AZURE_SAS_TOKEN=?sv=...
    
-   Or if using uv (Replit environment):
-   ```bash
-   uv pip install flask pillow pyyaml requests openai python-dotenv
+   # Optional
+   SESSION_SECRET=your_session_secret
    ```
 
-3. **Configure OpenAI API Key** (optional, for GenAI image generation):
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your OpenAI API key
-   ```
-   
-   If no API key is provided, the system will generate placeholder images instead.
-
-## Usage
-
-### Option 1: Web Interface (Recommended)
-
-The easiest way to use the Creative Automation Pipeline is through the web interface.
-
-1. **Start the web server**:
+3. **Run the application**:
    ```bash
    python app.py
    ```
 
-2. **Open your browser** and navigate to `http://localhost:5000`
+## Campaign Brief Format
 
-3. **Create your campaign**:
-   - Fill in the campaign details (region, audience, message)
-   - Add at least 2 products with descriptions
-   - Click "Generate Campaign Assets"
-   - View and download your generated creatives!
+### Default Configuration (Single Source of Truth)
 
-4. **Load Examples**: Use the "Load Example" buttons to see pre-configured campaigns
+The web UI automatically loads defaults from `examples/multi_product_campaign.yaml`:
 
-### Option 2: Command-Line Interface
+```yaml
+region: "Japan"
+audience: "Young, style-conscious professionals"
+message: "Clothes that make the man"
+brand_color: "#6366f1"
 
-For automation and batch processing, use the CLI tool.
-
-**Basic Usage**
-
-Run the pipeline with a campaign brief:
-
-```bash
-python main.py examples/campaign_brief.yaml
+products:
+  - name: "Business Casual for a Superman"
+    description: "Superman (as Clark) blending into a culturally specific newsroom environment..."
+    
+  - name: "Super Suit for a Superman"
+    description: "Clark (as Superman) blending into a culturally specific metropolitan environment..."
+    
+  - name: "Business Casual for a Batman"
+    description: "Batman (as Bruce) blending into a culturally specific Wayne Enterprises..."
+    
+  - name: "Bat Suit for a Dark Knight"
+    description: "Bruce (as Batman) blending into a culturally specific metropolitan environment..."
 ```
 
-### Command-Line Options
+**To change web UI defaults**: Simply edit `examples/multi_product_campaign.yaml` - the web form will load these values on page load!
 
+### Custom Campaign Brief
+
+Create your own YAML or JSON file:
+
+```yaml
+region: "France"
+audience: "Fashion-conscious millennials"
+message: "Style That Speaks Volumes"
+brand_color: "#e74c3c"
+
+products:
+  - name: "Designer Sunglasses"
+    description: "Luxury designer sunglasses with UV protection"
+    
+  - name: "Leather Handbag"
+    description: "Premium leather handbag with modern design"
+```
+
+### JSON Format
+
+```json
+{
+  "region": "Spain",
+  "audience": "Tech enthusiasts aged 25-40",
+  "message": "Innovation Meets Design",
+  "brand_color": "#3498db",
+  "products": [
+    {
+      "name": "Smart Watch",
+      "description": "Premium smartwatch with fitness tracking"
+    },
+    {
+      "name": "Wireless Earbuds",
+      "description": "Noise-cancelling wireless earbuds"
+    }
+  ]
+}
+```
+
+## Supported Regions (52 Total)
+
+### Asia-Pacific
+Japan, South Korea, China, Taiwan, Hong Kong, Thailand, Vietnam, Philippines, Singapore, India, Pakistan, Bangladesh, Indonesia, Malaysia, Australia, New Zealand
+
+### Middle East & North Africa
+Saudi Arabia, UAE, Egypt, Israel, Iran, Morocco, Turkey
+
+### Europe
+France, Germany, Spain, Italy, UK, Netherlands, Poland, Sweden, Norway, Denmark, Finland, Portugal, Greece, Czech Republic, Romania, Hungary, Russia, Ukraine
+
+### Americas
+USA, Canada, Mexico, Brazil, Argentina, Colombia, Chile, Peru
+
+### Africa
+South Africa, Nigeria, Kenya, Ethiopia
+
+## Key Architecture Decisions
+
+### 1. Single Source of Truth (YAML)
+- **Web UI defaults** are loaded from `examples/multi_product_campaign.yaml` via JavaScript on page load
+- **CLI examples** use the same YAML file
+- **Graceful fallback** to HTML hardcoded defaults if YAML fails to load
+- **Easy updates**: Edit one file to change defaults across entire application
+
+### 2. Azure-Based Versioning
+- Version numbers determined by querying Azure Blob Storage for highest existing version
+- Local `/outputs/` folder cleared each session for clean results
+- Version history persists in Azure (v1, v2, v3... continue across sessions)
+- Fallback to local versioning if Azure unavailable
+
+### 3. Intelligent Hero Image Logic
+- **User-uploaded heroes** (`/assets/input/uploads/`): Reused across all variants
+- **Missing heroes**: Trigger fresh GenAI generation with region-specific prompts
+- **AI-generated assets** (`/assets/input/generated/`): Culturally relevant backgrounds per region
+- **Logo assets** (`/assets/input/logos/`): Exclusive source for brand logos
+
+### 4. Parallel Processing
+- All products processed simultaneously using `ThreadPoolExecutor`
+- Up to 4x speed improvement for multi-product campaigns
+- Maintains quality while reducing generation time
+
+### 5. Multi-Script Font Support
+Automatic detection and font selection for:
+- **Thai**: Noto Sans Thai (213KB)
+- **Arabic/Persian/Urdu**: Noto Sans Arabic (824KB)
+- **Hebrew**: Noto Sans Hebrew (110KB)
+- **Bengali**: Noto Sans Bengali (446KB)
+- **Greek**: Noto Sans Greek (2MB)
+- **Devanagari/Hindi**: Noto Sans Devanagari (631KB)
+- **Ethiopic/Ge'ez**: Noto Sans Ethiopic (1.1MB)
+- **Korean/Hangul**: Noto Sans KR (10MB)
+- **Traditional Chinese**: Noto Sans TC (11.3MB)
+- **Japanese**: Noto Sans JP (9.2MB)
+- **Simplified Chinese**: Uses TC font
+- **Cyrillic/Latin**: System defaults
+
+### 6. Smart Text Overlay
+- Dynamic sizing based on image dimensions
+- Automatic text wrapping for optimal readability
+- Brand color customization
+- Shadow effects for visibility on any background
+
+### 7. Browser Cache Busting
+- Timestamp-based query parameters on image URLs
+- Ensures fresh image loading after regeneration
+- Prevents stale cache issues in web preview
+
+## Output Organization
+
+Generated creatives are organized by product and aspect ratio with incremental versioning:
+
+```
+outputs/
+├── business_casual_for_a_superman/
+│   ├── business_casual_for_a_superman_1x1_v1.png
+│   ├── business_casual_for_a_superman_9x16_v1.png
+│   └── business_casual_for_a_superman_16x9_v1.png
+├── super_suit_for_a_superman/
+│   ├── super_suit_for_a_superman_1x1_v1.png
+│   ├── super_suit_for_a_superman_9x16_v1.png
+│   └── super_suit_for_a_superman_16x9_v1.png
+└── ...
+```
+
+**Azure Storage** (version history persists):
+```
+assets/
+├── business_casual_for_a_superman/
+│   ├── business_casual_for_a_superman_1x1_v1.png
+│   ├── business_casual_for_a_superman_1x1_v2.png
+│   ├── business_casual_for_a_superman_1x1_v3.png
+│   └── ...
+└── ...
+```
+
+## CLI Usage
+
+### Basic Command
+```bash
+python main.py examples/multi_product_campaign.yaml
+```
+
+### Options
 ```bash
 python main.py <brief_file> [options]
 
@@ -129,229 +316,79 @@ Options:
 
 ### Examples
 
-**Example 1: Run with YAML brief**
+**Generate with verbose logging**:
 ```bash
-python main.py examples/campaign_brief.yaml
+python main.py examples/multi_product_campaign.yaml --verbose
 ```
 
-**Example 2: Run with JSON brief and verbose logging**
+**Custom directories**:
 ```bash
-python main.py examples/campaign_brief.json --verbose
+python main.py examples/campaign_brief.yaml --assets-dir ./custom_assets --outputs-dir ./my_outputs
 ```
 
-**Example 3: Custom asset and output directories**
+## Deployment
+
+### Development Server
 ```bash
-python main.py examples/campaign_brief.yaml --assets-dir ./my_assets --outputs-dir ./my_outputs
+python app.py
 ```
 
-## Campaign Brief Format
-
-### YAML Format
-
-```yaml
-region: "North America"
-audience: "Health-conscious millennials aged 25-40"
-message: "Transform Your Morning Routine"
-
-products:
-  - name: "Premium Green Tea"
-    description: "Organic premium green tea in elegant packaging"
-    
-  - name: "Protein Energy Bar"
-    description: "High-protein energy bar with natural ingredients"
-
-localized_messages:
-  en: "Transform Your Morning Routine"
-  es: "Transforma Tu Rutina Matutina"
-  fr: "Transformez Votre Routine Matinale"
+### Production (Gunicorn)
+```bash
+gunicorn --bind=0.0.0.0:5000 --reuse-port --workers=4 --threads=2 --timeout=300 app:app
 ```
 
-### JSON Format
-
-```json
-{
-  "region": "Europe",
-  "audience": "Tech-savvy professionals aged 30-50",
-  "message": "Elevate Your Workspace Experience",
-  "products": [
-    {
-      "name": "Wireless Ergonomic Mouse",
-      "description": "Premium wireless ergonomic mouse with precision tracking"
-    },
-    {
-      "name": "Mechanical Keyboard",
-      "description": "Professional mechanical keyboard with RGB lighting"
-    }
-  ],
-  "localized_messages": {
-    "en": "Elevate Your Workspace Experience",
-    "de": "Verbessern Sie Ihr Arbeitsplatzerlebnis"
-  }
-}
-```
-
-### Required Fields
-
-- **products** (array, min 2): List of products with `name` and optional `description`
-- **message** (string): Primary campaign message
-- **region** (string, optional): Target market/region
-- **audience** (string, optional): Target audience description
-- **localized_messages** (object, optional): Localized versions of the message
-
-## Asset Management
-
-The pipeline intelligently manages assets:
-
-1. **Existing Assets**: If an asset exists in `assets/input/` with a matching product name (e.g., `premium_green_tea.jpg`), it will be reused.
-
-2. **Generated Assets**: If no matching asset is found, the system generates one using GenAI based on the product name and description.
-
-3. **Asset Naming Convention**: 
-   - Normalize product names (lowercase, underscores)
-   - Supported formats: `.jpg`, `.jpeg`, `.png`, `.webp`
-   - Example: "Premium Green Tea" → `premium_green_tea.jpg`
-
-## Output Organization
-
-Generated creatives are organized by product and aspect ratio:
-
-```
-outputs/
-├── premium_green_tea/
-│   ├── premium_green_tea_1x1.png
-│   ├── premium_green_tea_9x16.png
-│   └── premium_green_tea_16x9.png
-├── protein_energy_bar/
-│   ├── protein_energy_bar_1x1.png
-│   ├── protein_energy_bar_9x16.png
-│   └── protein_energy_bar_16x9.png
-└── ...
-```
-
-## Aspect Ratios
-
-The pipeline generates creatives in three standard aspect ratios:
-
-- **1:1** (1080x1080) - Instagram posts, Facebook posts
-- **9:16** (1080x1920) - Instagram/TikTok Stories, Reels
-- **16:9** (1920x1080) - YouTube, landscape videos
-
-## Key Design Decisions
-
-### 1. Modular Architecture
-The system is designed with clear separation of concerns:
-- **Brief Parser**: Handles input validation and parsing
-- **Asset Manager**: Manages asset discovery and storage
-- **Image Generator**: Interfaces with GenAI services
-- **Image Processor**: Handles resizing and text overlay
-- **Pipeline Orchestrator**: Coordinates the entire workflow
-
-### 2. Asset Reusability
-To optimize costs and time, the system always checks for existing assets before generating new ones. This is particularly important for:
-- Recurring campaigns
-- Localized variants of the same product
-- A/B testing scenarios
-
-### 3. GenAI Integration
-The system integrates with OpenAI DALL-E 3 for image generation but includes a fallback to placeholder images if:
-- No API key is configured
-- API calls fail
-- Cost control is needed for testing
-
-### 4. Text Overlay System
-Text is added with:
-- Automatic text wrapping based on image width
-- Shadow effects for readability on any background
-- Dynamic font sizing based on image dimensions
-- Centered positioning with proper padding
-
-### 5. Error Handling
-The pipeline includes comprehensive error handling:
-- Input validation for campaign briefs
-- Graceful fallbacks for failed image generation
-- Detailed logging for debugging
-- Clear error messages for users
-
-## Assumptions and Limitations
-
-### Assumptions
-1. **Input Format**: Campaign briefs are well-formed JSON or YAML
-2. **Product Count**: Minimum 2 products per campaign (as per requirements)
-3. **Asset Quality**: Input assets are of sufficient quality for social media
-4. **Font Availability**: System has common fonts (DejaVu, Liberation) installed
-5. **Message Language**: Primary message is in English (localized versions supported but not auto-translated)
-
-### Current Limitations
-1. **Image Generation**: Requires OpenAI API key for actual GenAI; falls back to placeholders otherwise
-2. **Text Localization**: Accepts localized messages but doesn't auto-translate
-3. **Brand Compliance**: Not implemented in this POC (future enhancement)
-4. **Legal Checks**: Not implemented in this POC (future enhancement)
-5. **Storage Integration**: Uses local filesystem; cloud storage integration not included
-6. **Performance Tracking**: No analytics or performance metrics included
-7. **Batch Processing**: Processes one campaign at a time
-
-## Future Enhancements
-
-### Nice-to-Have Features (Next Phase)
-1. **Brand Compliance Checks**
-   - Logo presence detection
-   - Brand color validation
-   - Font compliance verification
-
-2. **Legal Content Filtering**
-   - Prohibited words detection
-   - Regulatory compliance checks
-   - Disclaimer requirements
-
-3. **Advanced Localization**
-   - Automatic translation integration
-   - Cultural adaptation (images, colors)
-   - Regional regulations compliance
-
-4. **Performance Analytics**
-   - Campaign tracking dashboard
-   - A/B testing support
-   - ROI metrics
-
-5. **Cloud Storage Integration**
-   - Azure Blob Storage
-   - AWS S3
-   - Dropbox Business
-
-6. **Batch Processing**
-   - Multiple campaigns simultaneously
-   - Queue management
-   - Priority handling
-
-## Logging
-
-The pipeline generates detailed logs:
-- **Console Output**: Real-time progress and results
-- **pipeline.log**: Detailed log file for debugging
-
-Enable verbose logging with the `-v` flag for more detailed information.
+**Recommended settings for multi-user support**:
+- `--workers=4` - 4 worker processes
+- `--threads=2` - 2 threads per worker
+- `--timeout=300` - 5-minute timeout for GenAI operations
+- Total capacity: 8 concurrent requests per instance
 
 ## Troubleshooting
 
-### Issue: "No module named 'src'"
-**Solution**: Run from the project root directory
+### Images not loading in web preview
+**Solution**: Check browser console for CORS errors. Ensure Azure SAS token is valid and has read permissions.
 
-### Issue: GenAI images not generating
-**Solution**: Check that your `OPENAI_API_KEY` is set correctly in `.env`
+### Text appears in wrong font/missing characters
+**Solution**: Ensure required Noto Sans fonts are installed in `/fonts/` directory.
 
-### Issue: Text not appearing on images
-**Solution**: Ensure system fonts are installed (DejaVu or Liberation fonts)
+### Version numbers not incrementing
+**Solution**: Verify Azure Blob Storage connection and SAS token permissions (read + list).
 
-### Issue: "Campaign brief must include at least two products"
-**Solution**: Add at least 2 products to your campaign brief
+### "Default campaign loaded from YAML successfully"
+**This is normal!** The web form loads defaults from `examples/multi_product_campaign.yaml` on page load.
 
-## Example Workflow
+### GenAI generation failing
+**Solution**: 
+1. Check `GEMINI_API_KEY` is set correctly
+2. Verify API quota/billing status
+3. Check fallback `OPENAI_API_KEY` if Gemini fails
 
-1. **Prepare your campaign brief** (YAML or JSON)
-2. **Add existing assets** (optional) to `assets/input/`
-3. **Run the pipeline**: `python main.py examples/campaign_brief.yaml`
-4. **Review outputs** in the `outputs/` directory
-5. **Check logs** in `pipeline.log` for detailed execution info
+### Parallel processing not working
+**Solution**: Ensure Python 3.11+ and `concurrent.futures` module is available.
+
+## Limitations & Future Enhancements
+
+### Current Limitations
+1. **Multi-session support**: Shared `/outputs/` directory; needs session-based isolation for true concurrent users
+2. **Azure race conditions**: `overwrite=True` may cause issues with simultaneous uploads
+3. **Local asset storage**: Generated images stored locally before Azure upload
+4. **Single Gunicorn worker**: Default config uses 1 worker; recommend 4+ for production
+
+### Planned Enhancements
+1. **Session-based file isolation**: Unique directories per user session
+2. **Azure conditional uploads**: Use ETag/if-not-exists to prevent race conditions
+3. **Direct Azure generation**: Skip local storage, write directly to cloud
+4. **Advanced analytics**: Campaign performance tracking and A/B testing
+5. **Brand compliance**: Automated logo presence detection and color validation
+6. **Legal content filtering**: Regulatory compliance checks and disclaimers
+
+## Performance Notes
+
+- **Parallel processing**: Reduces multi-product generation time by up to 4x
+- **Azure caching**: Version queries cached to minimize API calls
+- **Font optimization**: Fonts loaded lazily based on detected script
+- **Image optimization**: Smart cropping and resizing for optimal file sizes
 
 ## License
 
