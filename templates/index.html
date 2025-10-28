@@ -821,6 +821,93 @@
                 generateBtn.textContent = 'Generate Creatives';
             }
         });
+
+        // Load default campaign from YAML on page load
+        async function loadDefaultCampaign() {
+            try {
+                const response = await fetch('/examples');
+                const examples = await response.json();
+                const defaultCampaign = examples['multi_product_campaign'];
+                
+                if (!defaultCampaign) {
+                    console.log('No default campaign found, using hardcoded defaults');
+                    return;
+                }
+
+                // Populate campaign message
+                if (defaultCampaign.message) {
+                    document.getElementById('message').value = defaultCampaign.message;
+                }
+
+                // Populate region
+                if (defaultCampaign.region) {
+                    document.getElementById('region').value = defaultCampaign.region;
+                }
+
+                // Populate audience
+                if (defaultCampaign.audience) {
+                    document.getElementById('audience').value = defaultCampaign.audience;
+                }
+
+                // Populate brand color
+                if (defaultCampaign.brand_color) {
+                    document.getElementById('brandColor').value = defaultCampaign.brand_color;
+                    document.getElementById('colorValue').textContent = defaultCampaign.brand_color;
+                }
+
+                // Populate products
+                if (defaultCampaign.products && defaultCampaign.products.length > 0) {
+                    const container = document.getElementById('productsContainer');
+                    container.innerHTML = ''; // Clear existing products
+                    productCount = 0;
+
+                    defaultCampaign.products.forEach((product, index) => {
+                        const productItem = document.createElement('div');
+                        productItem.className = 'product-item';
+                        productItem.innerHTML = `
+                            <div class="product-header">
+                                <input type="text" placeholder="Product Name" class="product-name" value="${product.name || ''}" required>
+                                <button type="button" class="btn-remove-product" onclick="removeProduct(this)" title="Remove Product">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <textarea placeholder="Product Description" class="product-description" rows="7">${product.description || ''}</textarea>
+                            <div class="hero-image-upload">
+                                <button type="button" class="file-upload-btn btn-azure-select" onclick="openAzureImageBrowser(this)">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                                    </svg>
+                                    Select Hero from Azure
+                                </button>
+                                <input type="hidden" class="azure-image-url">
+                                <div class="hero-image-preview" style="display: none;">
+                                    <button type="button" class="btn-remove-hero" onclick="removeHeroImage(this)" title="Remove Hero Image">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                    <img class="hero-preview-image" src="" alt="Hero Image Preview">
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(productItem);
+                        productCount++;
+                    });
+
+                    attachFileListeners();
+                }
+
+                console.log('Default campaign loaded from YAML successfully');
+            } catch (error) {
+                console.error('Failed to load default campaign from YAML:', error);
+                console.log('Using hardcoded defaults in HTML');
+            }
+        }
+
+        // Load defaults on page load
+        document.addEventListener('DOMContentLoaded', loadDefaultCampaign);
     </script>
 
     <!-- Azure Image Browser Modal -->

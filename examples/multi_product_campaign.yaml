@@ -1,18 +1,17 @@
-region: "Asia-Pacific"
-audience: "Fashion-forward young adults aged 18-35"
-message: "Style That Speaks Volumes"
+region: "Japan"
+audience: "Young, style-conscious professionals"
+message: "Clothes that make the man"
+brand_color: "#6366f1"
 
 products:
-  - name: "Designer Sunglasses"
-    description: "Luxury designer sunglasses with UV protection"
+  - name: "Business Casual for a Superman"
+    description: "Superman (as Clark) blending into a culturally specific newsroom environment through appropriate business casual attire (as a disguise) with horned-rimmed glasses as part of his cover identity with the hero's physical appearance based on the same model (Henry Cavill) in every image"
     
-  - name: "Leather Handbag"
-    description: "Premium leather handbag with modern design"
+  - name: "Super Suit for a Superman"
+    description: "Clark (as Superman) blending into a culturally specific metropolitan environment with the hero's physical appearance based on the same model (Henry Cavill) in every image"
     
-  - name: "Sports Watch"
-    description: "Smart sports watch with fitness tracking"
-
-localized_messages:
-  en: "Style That Speaks Volumes"
-  ja: "ボリュームを語るスタイル"
-  zh: "彰显风格的力量"
+  - name: "Business Casual for a Batman"
+    description: "Batman (as Bruce) blending into a culturally specific Wayne Enterprises corporate office environment through appropriate business casual attire with the hero's physical appearance based on the same model (Henry Cavill) in every image"
+    
+  - name: "Bat Suit for a Dark Knight"
+    description: "Bruce (as Batman) blending into a culturally specific metropolitan environment with the hero's physical appearance based on the same model (Henry Cavill) in every image"
