@@ -14,6 +14,7 @@ ASPECT_RATIOS = {
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 GOOGLE_TRANSLATE_API_KEY = os.getenv("GOOGLE_TRANSLATE_API_KEY", "")
+PERSPECTIVE_API_KEY = os.getenv("PERSPECTIVE_API_KEY", "")
 
 # Azure Blob Storage (SAS URL for secure, scoped access)
 AZURE_STORAGE_SAS_URL = os.getenv("AZURE_STORAGE_SAS_URL", "")
