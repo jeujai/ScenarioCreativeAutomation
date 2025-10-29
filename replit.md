@@ -20,7 +20,12 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
   - **With uploaded hero**: Reuses user-provided image across all outputs (only text overlay changes per region)
   - **Without uploaded hero**: Generates fresh region-specific images via GenAI for each campaign, creating culturally appropriate backgrounds (e.g., Russia scene for Russia, Japan scene for Japan)
 - **Image Processing**: Optimized image resizing with smart cropping (cover/crop mode, smart crop positioning for 16:9, center for 9:16 and 1:1), campaign message text overlay with customizable brand color, and multi-script font support for multilingual text rendering (Thai, Arabic, Hebrew, Bengali, Greek, Devanagari, Ethiopic, Korean, Traditional Chinese, Japanese, Cyrillic, Latin).
-- **Localization**: Automatic translation of campaign messages to 50+ global regions with graceful fallback and intelligent font selection based on script detection. Covers major markets across Asia-Pacific (Japan, South Korea, China, Taiwan, Thailand, Vietnam, Philippines, Singapore, India, Pakistan, Bangladesh, Indonesia, Malaysia, Australia, New Zealand), Middle East & North Africa (Saudi Arabia, UAE, Egypt, Israel, Iran, Morocco, Turkey), Europe (France, Germany, Spain, Italy, UK, Netherlands, Poland, Sweden, Norway, Denmark, Finland, Portugal, Greece, Czech Republic, Romania, Hungary, Russia, Ukraine), Americas (USA, Canada, Mexico, Brazil, Argentina, Colombia, Chile, Peru), and Africa (South Africa, Nigeria, Kenya, Ethiopia).
+- **Localization**: **Smart 3-tier translation strategy** for campaign messages across 52 global regions:
+  1. **Hardcoded translations** (instant, high-quality) - Pre-translated messages for common phrases
+  2. **Google Cloud Translation API** (dynamic) - Automatic translation of ANY custom message using Google Translate
+  3. **English fallback** - Original message if API unavailable or region not mapped
+  
+  Supports major markets across Asia-Pacific (Japan, South Korea, China, Taiwan, Thailand, Vietnam, Philippines, Singapore, India, Pakistan, Bangladesh, Indonesia, Malaysia, Australia, New Zealand), Middle East & North Africa (Saudi Arabia, UAE, Egypt, Israel, Iran, Morocco, Turkey), Europe (France, Germany, Spain, Italy, UK, Netherlands, Poland, Sweden, Norway, Denmark, Finland, Portugal, Greece, Czech Republic, Romania, Hungary, Russia, Ukraine), Americas (USA, Canada, Mexico, Brazil, Argentina, Colombia, Chile, Peru), and Africa (South Africa, Nigeria, Kenya, Ethiopia). Includes intelligent font selection based on script detection for proper multilingual text rendering.
 - **Output & Storage**: Organizes output by product and aspect ratio, provides real-time asset preview and download, and integrates with Azure Blob Storage for cloud uploads. Azure image selectors use intelligent filtering: "Select Logo from Azure" looks exclusively in `assets/logos/`, while "Select Hero from Azure" filters by product (shows only that product's assets if product exists in Azure, otherwise shows all non-logo assets). Generated images are uploaded to Azure under `assets/` with product subfolders, uploading only newly created files to prevent duplicates.
 - **CLI**: A command-line interface provides automation capabilities, mirroring the web application's core functions.
 
@@ -54,7 +59,8 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 
 ## Environment Variables
 - **GEMINI_API_KEY**: Google Gemini API key for primary image generation
-- **OPENAI_API_KEY**: OpenAI API key for fallback image generation  
+- **OPENAI_API_KEY**: OpenAI API key for fallback image generation
+- **GOOGLE_TRANSLATE_API_KEY**: Google Cloud Translation API key for dynamic translation of custom campaign messages (optional - falls back to hardcoded translations)
 - **AZURE_STORAGE_SAS_URL**: Azure Blob Storage SAS URL (format: `https://account.blob.core.windows.net/container?sp=...&sig=...`)
 - **AZURE_CONTAINER_NAME**: Override container name from SAS URL (default: `campaign-assets`)
 - **AZURE_UPLOAD_ENABLED**: Enable/disable Azure uploads (default: `true`)

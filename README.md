@@ -119,6 +119,9 @@ creative-automation-pipeline/
    GEMINI_API_KEY=your_gemini_api_key
    OPENAI_API_KEY=your_openai_api_key
    
+   # Google Cloud Translation API (for dynamic translation of any message)
+   GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
+   
    # Azure Blob Storage (SAS URL for secure, time-limited, scoped access)
    AZURE_STORAGE_SAS_URL=https://account.blob.core.windows.net/container?sp=racwdli&st=2025-10-24T04:45:54Z&se=2026-10-01T13:00:54Z&sv=2024-11-04&sr=c&sig=...
    

@@ -44,6 +44,7 @@ logger.info(f"Python version: {sys.version}")
 logger.info(f"Assets directory: {ASSETS_DIR}")
 logger.info(f"Outputs directory: {OUTPUTS_DIR}")
 logger.info(f"Gemini API Key configured: {bool(os.getenv('GEMINI_API_KEY'))}")
+logger.info(f"Google Translate API Key configured: {bool(os.getenv('GOOGLE_TRANSLATE_API_KEY'))}")
 logger.info(f"Azure configured: {bool(os.getenv('AZURE_STORAGE_SAS_URL'))}")
 logger.info("=" * 60)
 
