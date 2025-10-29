@@ -75,6 +75,13 @@ def examples():
     return jsonify(example_files)
 
 
+@app.route('/regions')
+def regions():
+    """Return list of supported regions from RegionalTranslator"""
+    from src.translator import RegionalTranslator
+    return jsonify(RegionalTranslator.get_supported_regions())
+
+
 @app.route('/generate', methods=['POST'])
 def generate():
     try:

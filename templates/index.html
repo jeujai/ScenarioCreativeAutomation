@@ -153,58 +153,7 @@
                     <label>Target Region/Market</label>
                     <input type="text" id="region" name="region" value="Japan" placeholder="Select or type a region" list="regionList" autocomplete="off">
                     <datalist id="regionList">
-                        <option value="Japan">
-                        <option value="South Korea">
-                        <option value="China">
-                        <option value="Taiwan">
-                        <option value="Thailand">
-                        <option value="Vietnam">
-                        <option value="Philippines">
-                        <option value="Singapore">
-                        <option value="India">
-                        <option value="Pakistan">
-                        <option value="Bangladesh">
-                        <option value="Indonesia">
-                        <option value="Malaysia">
-                        <option value="Australia">
-                        <option value="New Zealand">
-                        <option value="Saudi Arabia">
-                        <option value="UAE">
-                        <option value="Egypt">
-                        <option value="Israel">
-                        <option value="Iran">
-                        <option value="Morocco">
-                        <option value="Turkey">
-                        <option value="France">
-                        <option value="Germany">
-                        <option value="Spain">
-                        <option value="Italy">
-                        <option value="UK">
-                        <option value="Netherlands">
-                        <option value="Poland">
-                        <option value="Sweden">
-                        <option value="Norway">
-                        <option value="Denmark">
-                        <option value="Finland">
-                        <option value="Portugal">
-                        <option value="Greece">
-                        <option value="Czech Republic">
-                        <option value="Romania">
-                        <option value="Hungary">
-                        <option value="Russia">
-                        <option value="Ukraine">
-                        <option value="USA">
-                        <option value="Canada">
-                        <option value="Mexico">
-                        <option value="Brazil">
-                        <option value="Argentina">
-                        <option value="Colombia">
-                        <option value="Chile">
-                        <option value="Peru">
-                        <option value="South Africa">
-                        <option value="Nigeria">
-                        <option value="Kenya">
-                        <option value="Ethiopia">
+                        <!-- Regions loaded dynamically from backend -->
                     </datalist>
                 </div>
 
@@ -906,8 +855,32 @@
             }
         }
 
-        // Load defaults on page load
-        document.addEventListener('DOMContentLoaded', loadDefaultCampaign);
+        // Load supported regions from backend
+        async function loadRegions() {
+            try {
+                const response = await fetch('/regions');
+                const regions = await response.json();
+                
+                const datalist = document.getElementById('regionList');
+                datalist.innerHTML = ''; // Clear existing options
+                
+                regions.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region;
+                    datalist.appendChild(option);
+                });
+                
+                console.log(`Loaded ${regions.length} regions from backend`);
+            } catch (error) {
+                console.error('Failed to load regions:', error);
+            }
+        }
+
+        // Load defaults and regions on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRegions();
+            loadDefaultCampaign();
+        });
     </script>
 
     <!-- Azure Image Browser Modal -->
