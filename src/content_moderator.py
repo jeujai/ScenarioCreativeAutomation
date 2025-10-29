@@ -54,7 +54,10 @@ class ContentModerator:
             }
         
         try:
-            response = client.moderations.create(input=text)
+            response = client.moderations.create(
+                input=text,
+                model="omni-moderation-latest"
+            )
             result = response.results[0]
             
             return {
