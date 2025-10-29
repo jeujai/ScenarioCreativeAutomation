@@ -60,6 +60,12 @@ Examples:
         help='Enable verbose logging'
     )
     
+    parser.add_argument(
+        '--skip-moderation',
+        action='store_true',
+        help='Skip AI-based content moderation checks'
+    )
+    
     args = parser.parse_args()
     
     setup_logging(args.verbose)
@@ -71,7 +77,7 @@ Examples:
         logger.info("="*80)
         
         logger.info(f"\nParsing campaign brief: {args.brief}")
-        campaign_brief = BriefParser.parse_file(args.brief)
+        campaign_brief = BriefParser.parse_file(args.brief, skip_moderation=args.skip_moderation)
         
         logger.info(f"Campaign Details:")
         logger.info(f"  Products: {len(campaign_brief.products)}")
@@ -84,7 +90,7 @@ Examples:
             outputs_dir=Path(args.outputs_dir)
         )
         
-        results = pipeline.run(campaign_brief)
+        results, azure_upload_count = pipeline.run(campaign_brief)
         
         logger.info("\n" + "="*80)
         logger.info("PIPELINE SUMMARY")
@@ -96,6 +102,7 @@ Examples:
                 logger.info(f"  ✓ {path}")
         
         logger.info(f"\nTotal creatives generated: {sum(len(v) for v in results.values())}")
+        logger.info(f"Azure uploads: {azure_upload_count}")
         logger.info(f"Output directory: {args.outputs_dir}")
         logger.info("\n" + "="*80)
         logger.info("PIPELINE COMPLETED SUCCESSFULLY!")
