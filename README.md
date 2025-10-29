@@ -28,6 +28,12 @@ A GenAI-powered creative automation pipeline that generates localized social ad 
 - **Multi-Script Font Support**: Automatic font selection for Thai, Arabic, Hebrew, Bengali, Greek, Devanagari, Ethiopic, Korean, Traditional/Simplified Chinese, Japanese, Cyrillic, and Latin scripts
 - **Cultural Adaptation**: Region-specific image generation with culturally appropriate backgrounds
 
+### 🛡️ Content Moderation
+- **AI-Powered Safety**: OpenAI Moderation API checks all text for inappropriate content
+- **Comprehensive Checks**: Validates campaign messages, product names, descriptions, and audience fields
+- **Clear Feedback**: Specific error messages identify flagged content with category details
+- **Graceful Fallback**: Continues operation if moderation API is unavailable
+
 ### 📦 Asset Management
 - **Azure Blob Storage**: Cloud-based asset storage with intelligent filtering
 - **Smart Versioning**: Azure-based incremental versioning (v1, v2, v3...) with session persistence
@@ -104,7 +110,7 @@ creative-automation-pipeline/
 - Python 3.11+
 - Azure Blob Storage account (for cloud features)
 - Google Gemini API key (primary GenAI)
-- OpenAI API key (fallback GenAI)
+- OpenAI API key (fallback GenAI and content moderation)
 
 ### Setup
 
@@ -115,9 +121,9 @@ creative-automation-pipeline/
 
 2. **Configure environment variables**:
    ```bash
-   # Required for full functionality
+   # Required for full functionality (image generation and content moderation)
    GEMINI_API_KEY=your_gemini_api_key
-   OPENAI_API_KEY=your_openai_api_key
+   OPENAI_API_KEY=your_openai_api_key  # Used for DALL-E fallback and content moderation
    
    # Google Cloud Translation API (for dynamic translation of any message)
    GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
