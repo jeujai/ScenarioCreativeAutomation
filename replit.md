@@ -9,7 +9,9 @@ Not specified.
 ## System Architecture
 
 ### Content Moderation
-The system includes AI-based content moderation using OpenAI's Moderation API to detect prohibited words, offensive content, and inappropriate text before campaign generation. All user-provided text (campaign messages, product names, product descriptions, and audience fields) is checked for:
+The system includes dual-layer AI-based content moderation to ensure brand safety before campaign generation. All user-provided text (campaign messages, product names, product descriptions, and audience fields) is checked using:
+
+**Layer 1 - OpenAI Moderation API** (harmful content):
 - Violence and threats
 - Self-harm content
 - Sexual content
@@ -17,7 +19,14 @@ The system includes AI-based content moderation using OpenAI's Moderation API to
 - Harassment
 - Dangerous content
 
-If inappropriate content is detected, the system rejects the campaign with specific feedback indicating which fields were flagged and why. Moderation can be bypassed using the `--skip-moderation` flag in the CLI for testing purposes. The system gracefully handles API failures by continuing without moderation rather than blocking campaign generation.
+**Layer 2 - Google Perspective API** (toxicity/profanity, 70% threshold):
+- Toxicity and severe toxicity
+- Identity attacks
+- Insults
+- Profanity
+- Threats
+
+If inappropriate content is detected by either API, the system rejects the campaign with specific feedback indicating which fields were flagged and why. Moderation can be bypassed using the `--skip-moderation` flag in the CLI for testing purposes. The system gracefully handles API failures by continuing without moderation rather than blocking campaign generation.
 
 ### UI/UX Decisions
 The web interface features a modern, responsive design with a dark, professional theme inspired by creative tools. It utilizes a grid-based layout with a 400px-wide sidebar (for comfortable product name visibility), main preview area, and a real-time process logs panel. Key UI elements include a visual color picker, Azure Blob Storage integration for image selection with previews, an autocomplete dropdown for region selection with all 52 supported regions, a redesigned results gallery layout for optimal viewing of different aspect ratios, product section headers that appear above each product's image gallery for clear organization, and removable brand logo preview with one-click deselection capability.
@@ -69,7 +78,8 @@ The system is built on a modular architecture using Python 3.11 and Flask for th
 
 ## Environment Variables
 - **GEMINI_API_KEY**: Google Gemini API key for primary image generation
-- **OPENAI_API_KEY**: OpenAI API key for fallback image generation and content moderation
+- **OPENAI_API_KEY**: OpenAI API key for fallback image generation and harmful content moderation
+- **PERSPECTIVE_API_KEY**: Google Perspective API key for toxicity/profanity detection (optional - recommended for brand safety)
 - **GOOGLE_TRANSLATE_API_KEY**: Google Cloud Translation API key for dynamic translation of custom campaign messages (optional - falls back to hardcoded translations)
 - **AZURE_STORAGE_SAS_URL**: Azure Blob Storage SAS URL (format: `https://account.blob.core.windows.net/container?sp=...&sig=...`)
 - **AZURE_CONTAINER_NAME**: Override container name from SAS URL (default: `campaign-assets`)

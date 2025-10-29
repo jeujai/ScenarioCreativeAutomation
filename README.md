@@ -29,10 +29,12 @@ A GenAI-powered creative automation pipeline that generates localized social ad 
 - **Cultural Adaptation**: Region-specific image generation with culturally appropriate backgrounds
 
 ### 🛡️ Content Moderation
-- **AI-Powered Safety**: OpenAI Moderation API checks all text for inappropriate content
+- **Dual-Layer AI Safety**: 
+  - OpenAI Moderation API detects harmful content (violence, hate, harassment, sexual, self-harm)
+  - Google Perspective API catches toxicity, profanity, and insults (70% threshold)
 - **Comprehensive Checks**: Validates campaign messages, product names, descriptions, and audience fields
-- **Clear Feedback**: Specific error messages identify flagged content with category details
-- **Graceful Fallback**: Continues operation if moderation API is unavailable
+- **Clear Feedback**: Specific error messages identify flagged content with category details from both APIs
+- **Graceful Fallback**: Continues operation if moderation APIs are unavailable
 
 ### 📦 Asset Management
 - **Azure Blob Storage**: Cloud-based asset storage with intelligent filtering
@@ -110,7 +112,8 @@ creative-automation-pipeline/
 - Python 3.11+
 - Azure Blob Storage account (for cloud features)
 - Google Gemini API key (primary GenAI)
-- OpenAI API key (fallback GenAI and content moderation)
+- OpenAI API key (fallback GenAI and harmful content moderation)
+- Google Perspective API key (optional - toxicity/profanity detection)
 
 ### Setup
 
@@ -121,12 +124,15 @@ creative-automation-pipeline/
 
 2. **Configure environment variables**:
    ```bash
-   # Required for full functionality (image generation and content moderation)
+   # Required for full functionality (image generation and harmful content moderation)
    GEMINI_API_KEY=your_gemini_api_key
-   OPENAI_API_KEY=your_openai_api_key  # Used for DALL-E fallback and content moderation
+   OPENAI_API_KEY=your_openai_api_key  # Used for DALL-E fallback and harmful content moderation
    
    # Google Cloud Translation API (for dynamic translation of any message)
    GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
+   
+   # Google Perspective API (for toxicity/profanity detection - optional but recommended)
+   PERSPECTIVE_API_KEY=your_perspective_api_key
    
    # Azure Blob Storage (SAS URL for secure, time-limited, scoped access)
    AZURE_STORAGE_SAS_URL=https://account.blob.core.windows.net/container?sp=racwdli&st=2025-10-24T04:45:54Z&se=2026-10-01T13:00:54Z&sv=2024-11-04&sr=c&sig=...
