@@ -2,6 +2,11 @@ import json
 import yaml
 from pathlib import Path
 from typing import Dict, List, Any
+import logging
+
+from .content_moderator import ContentModerator
+
+logger = logging.getLogger(__name__)
 
 
 class CampaignBrief:
@@ -31,13 +36,27 @@ class CampaignBrief:
         # Handle both camelCase (from frontend) and snake_case formats
         return self.raw_data.get('logoSelected') or self.raw_data.get('logo_selected', False)
     
-    def validate(self) -> bool:
+    def validate(self, skip_moderation: bool = False) -> bool:
         if not self.products:
             raise ValueError("Campaign brief must include at least one product")
         if len(self.products) < 2:
             raise ValueError("Campaign brief must include at least two products")
         if not self.message:
             raise ValueError("Campaign brief must include a message")
+        
+        # AI-based content moderation (can be skipped if needed)
+        if not skip_moderation:
+            logger.info("Running AI-based content moderation...")
+            moderation_result = ContentModerator.moderate_campaign_brief(self.raw_data)
+            
+            if not moderation_result['passed']:
+                violations = moderation_result['violations']
+                error_message = ContentModerator.format_violation_message(violations)
+                logger.warning(f"Content moderation failed: {len(violations)} violations found")
+                raise ValueError(error_message)
+            
+            logger.info("Content moderation passed - all content is appropriate")
+        
         return True
     
     def get_message(self, language: str = "en") -> str:
@@ -47,7 +66,7 @@ class CampaignBrief:
 
 class BriefParser:
     @staticmethod
-    def parse_file(file_path: str) -> CampaignBrief:
+    def parse_file(file_path: str, skip_moderation: bool = False) -> CampaignBrief:
         path = Path(file_path)
         
         if not path.exists():
@@ -62,11 +81,11 @@ class BriefParser:
                 raise ValueError(f"Unsupported file format: {path.suffix}. Use .json, .yaml, or .yml")
         
         brief = CampaignBrief(data)
-        brief.validate()
+        brief.validate(skip_moderation=skip_moderation)
         return brief
     
     @staticmethod
-    def parse_dict(data: Dict[str, Any]) -> CampaignBrief:
+    def parse_dict(data: Dict[str, Any], skip_moderation: bool = False) -> CampaignBrief:
         brief = CampaignBrief(data)
-        brief.validate()
+        brief.validate(skip_moderation=skip_moderation)
         return brief
